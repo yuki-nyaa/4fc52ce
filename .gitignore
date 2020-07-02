@@ -34,12 +34,14 @@
 
 # Executables
 a.out
+*.exe
 
 # Other
 .DS_Store
 *.dSYM
 .*.swp
 .*.swa
+*.code-workspace
 
 # Autotools
 .deps

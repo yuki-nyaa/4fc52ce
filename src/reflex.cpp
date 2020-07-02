@@ -2162,9 +2162,10 @@ void Reflex::write_class()
       "    :\n"
       "      AbstractBaseLexer(input, os)\n";
     write_section_init();
+    *out<<"  enum {";
     for (Start start = 0; start < conditions.size(); ++start)
-      *out <<
-        "  static const int " << conditions[start] << " = " << start << ";\n";
+      *out << conditions[start] << ",";
+    *out << "};\n";
     if (!options["bison_complete"].empty())
     {
       if (!options["bison_locations"].empty())
@@ -2812,7 +2813,22 @@ void Reflex::write_lexer()
           "              if (debug()) std::cerr << \"--" <<
           SGR("\\033[1;31m") << "accepting default rule" << SGR("\\033[0m") <<
           "\\n\";\n";
-      if (!options["nodefault"].empty())
+      bool has_default = false;
+      for (Rules::const_iterator rule = rules[start].begin(); rule != rules[start].end(); ++rule)
+      {
+        if (rule->regex == "<<DEFAULT>>")
+        {
+          if (!options["debug"].empty())
+            *out <<
+              "              if (debug()) std::cerr << \"--" <<
+              SGR("\\033[1;35m") << "DEFAULT rule at line " << rule->code.lineno << SGR("\\033[0m") <<
+              " (start condition \" << start() << \")\\n\";\n";
+          write_code(rule->code);
+          has_default = true;
+          break;
+        }
+      }
+      if (has_default==false && !options["nodefault"].empty())
       {
         if (!options["flex"].empty())
           *out <<
