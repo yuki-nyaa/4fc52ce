@@ -1090,9 +1090,9 @@ bool Reflex::get_pattern(size_t& pos, std::string& pattern, std::string& regex)
       nsp = pos;
   }
   pattern.append(line.substr(loc, pos - loc));
-  if (pattern == "<<EOF>>")
+  if (pattern == "<<EOF>>" || pattern == "<<DEFAULT>>")
   {
-    regex = pattern; // special case <<EOF>> pattern
+    regex = pattern; // special case <<EOF>> and <<DEFAULT>> pattern
   }
   else
   {
@@ -1612,6 +1612,14 @@ void Reflex::parse_section_2()
             for (Start start = 0; start < conditions.size(); ++start)
               rules[start].push_back(Rule(pattern, regex, Code(code, infile, rule_lineno)));
           }
+          else if (scopes.empty() && regex == "<<DEFAULT>>")
+          {
+            // only the first <<DEFAULT>> code should be used
+            if (code == "|")
+              error("bad <<DEFAULT>> action | in section 2: ", line.c_str());
+            for (Start start = 0; start < conditions.size(); ++start)
+              rules[start].push_back(Rule(pattern, regex, Code(code, infile, rule_lineno)));
+          }
           else if (!scopes.empty())
           {
             for (Starts::const_iterator start = scopes.top().begin(); start != scopes.top().end(); ++start)
@@ -1659,7 +1667,7 @@ void Reflex::parse_section_2()
     const char *sep = "";
     for (Rules::const_iterator rule = rules[start].begin(); rule != rules[start].end(); ++rule)
     {
-      if (rule->regex != "<<EOF>>")
+      if (rule->regex != "<<EOF>>" && rule->regex != "<<DEFAULT>>")
       {
         pattern.append(sep).append("(").append(rule->regex).append(")");
         sep = "|";
@@ -2845,7 +2853,7 @@ void Reflex::write_lexer()
             "              throw " << options["exception"] << ";\n";
         else
           *out <<
-            "              lexer_error(\"scanner jammed\");\n"
+            "              lexer_error((std::string(\"scanner jammed in initial state \")+std::to_string(start())).c_str());\n"
             "              return " << token_type << "();\n";
       }
       else
@@ -2878,11 +2886,11 @@ void Reflex::write_lexer()
     for (Rules::const_iterator rule = rules[start].begin(); rule != rules[start].end(); ++rule)
     {
       bool eof_rule = rule->regex == "<<EOF>>";
-      if (!eof_rule || !has_code)
+      bool default_rule = rule->regex == "<<DEFAULT>>";
+      if (!eof_rule && !default_rule)
       {
-        if (!eof_rule)
-          *out <<
-            "          case " << accept << ": // rule " << rule->code.file << ":" << rule->code.lineno << ": " << rule->pattern << " :\n";
+        *out <<
+          "          case " << accept << ": // rule " << rule->code.file << ":" << rule->code.lineno << ": " << rule->pattern << " :\n";
         has_code = rule->code.line != "|";
         if (has_code)
         {
@@ -3108,7 +3116,7 @@ void Reflex::stats()
         reflex::Pattern pattern(patterns[start], option);
         reflex::Pattern::Index accept = 1;
         for (size_t rule = 0; rule < rules[start].size(); ++rule)
-          if (rules[start][rule].regex != "<<EOF>>")
+          if (rules[start][rule].regex != "<<EOF>>" && rules[start][rule].regex != "<<DEFAULT>>")
             if (!pattern.reachable(accept++))
               warning("rule cannot be matched because a previous rule subsumes it, perhaps try to move this rule up?", "", rules[start][rule].code.lineno);
         reflex::Pattern::Index n = 0;
