@@ -869,6 +869,11 @@ class AbstractMatcher {
     buf_[pos_] = c;
     cur_ = pos_;
   }
+  /// Put back one character (8-bit) on the input character sequence for matching, DANGER: invalidates the previous text() pointer and match info, unput is not honored when matching in-place using buffer(base, size) and nothing has been read yet.
+  void unput() /// Overload with no parameters to unput chr().
+  {
+    unput(chr());
+  }
   /// Put back one (wide) character on the input character sequence for matching, DANGER: invalidates the previous text() pointer and match info, unput is not honored when matching in-place using buffer(base, size) and nothing has been read yet.
   void wunput(int c) ///< character to put back
   {
@@ -890,6 +895,11 @@ class AbstractMatcher {
     }
     std::memcpy(&buf_[pos_], tmp, n);
     cur_ = pos_;
+  }
+  /// Put back one (wide) character on the input character sequence for matching, DANGER: invalidates the previous text() pointer and match info, unput is not honored when matching in-place using buffer(base, size) and nothing has been read yet.
+  void wunput() /// Overload with no paramaters to unput wchr().
+  {
+    wunput(wchr());
   }
   /// Peek at the next character available for reading from the current input source.
   inline int peek()
