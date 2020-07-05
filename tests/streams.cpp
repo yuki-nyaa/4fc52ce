@@ -62,7 +62,7 @@ int main()
 
   // test file, open a UTF-16 file with UTF-16 BOM
   FILE *fd = fopen("utf16lorem.txt", "r");
-  if (fd == NULL)
+  if (fd == nullptr)
     exit(EXIT_FAILURE);
   input = fd;
   // input.file_encoding(...); // optionally specify the encoding of the input file here

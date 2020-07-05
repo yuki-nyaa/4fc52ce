@@ -136,7 +136,7 @@ inline size_t utf8(
 /// Convert UTF-8 to UCS, returns REFLEX_NONCHAR for invalid UTF-8 except for MUTF-8 U+0000 and 0xD800-0xDFFF surrogate halves (use WITH_UTF8_UNRESTRICTED to remove any limits on UTF-8 encodings up to 6 bytes).
 inline int utf8(
     const char *s,         ///< points to the buffer with UTF-8 (1 to 6 bytes)
-    const char **r = NULL) ///< points to pointer to set to the new position in s after the UTF-8 sequence, optional
+    const char **r = nullptr) ///< points to pointer to set to the new position in s after the UTF-8 sequence, optional
   /// @returns UCS character
 {
   int c;
@@ -212,7 +212,7 @@ inline int utf8(
       }
     }
   }
-  if (r != NULL)
+  if (r != nullptr)
     *r = s;
   return c;
 }

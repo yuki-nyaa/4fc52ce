@@ -61,7 +61,7 @@ class StdMatcher : public PatternMatcher<std::regex> {
   StdMatcher(
       const P     *pattern,         ///< points to a std::regex or a string regex for this matcher
       const Input& input = Input(), ///< input character sequence for this matcher
-      const char  *opt = NULL)      ///< option string of the form `(A|N|T(=[[:digit:]])?|;)*`
+      const char  *opt = nullptr)      ///< option string of the form `(A|N|T(=[[:digit:]])?|;)*`
     :
       PatternMatcher(pattern, input, opt),
       flg_()
@@ -73,7 +73,7 @@ class StdMatcher : public PatternMatcher<std::regex> {
   StdMatcher(
       const P&     pattern,         ///< a std::regex or a string regex for this matcher
       const Input& input = Input(), ///< input character sequence for this matcher
-      const char  *opt = NULL)      ///< option string of the form `(A|N|T(=[[:digit:]])?|;)*`
+      const char  *opt = nullptr)      ///< option string of the form `(A|N|T(=[[:digit:]])?|;)*`
     :
       PatternMatcher(pattern, input, opt),
       flg_()
@@ -99,7 +99,7 @@ class StdMatcher : public PatternMatcher<std::regex> {
     return new StdMatcher(*this);
   }
   /// Reset this matcher's state to the initial state and when assigned new input.
-  virtual void reset(const char *opt = NULL)
+  virtual void reset(const char *opt = nullptr)
   {
     DBGLOG("StdMatcher::reset()");
     itr_ = fin_ = std::cregex_iterator();
@@ -153,33 +153,33 @@ class StdMatcher : public PatternMatcher<std::regex> {
     if (n == 0)
       return std::pair<const char*,size_t>(txt_, len_);
     if (itr_ == fin_ || n >= (*itr_).size() || !(*itr_)[n].matched)
-      return std::pair<const char*,size_t>(NULL, 0);
+      return std::pair<const char*,size_t>(nullptr, 0);
     return std::pair<const char*,size_t>((*itr_)[n].first, (*itr_)[n].second - (*itr_)[n].first);
   }
-  /// Returns the group capture identifier containing the group capture index >0 and name (or NULL) of a named group capture, or (1,NULL) by default
+  /// Returns the group capture identifier containing the group capture index >0 and name (or nullptr) of a named group capture, or (1,nullptr) by default
   virtual std::pair<size_t,const char*> group_id()
     /// @returns a pair of size_t and string
   {
     grp_ = 1;
     if (itr_ == fin_ || (*itr_).size() <= 1)
-      return std::pair<size_t,const char*>(0, NULL);
+      return std::pair<size_t,const char*>(0, nullptr);
     if ((*itr_)[1].matched)
-      return std::pair<size_t,const char*>(1, NULL);
+      return std::pair<size_t,const char*>(1, nullptr);
     return group_next_id();
   }
-  /// Returns the next group capture identifier containing the group capture index >0 and name (or NULL) of a named group capture, or (0,NULL) when no more groups matched
+  /// Returns the next group capture identifier containing the group capture index >0 and name (or nullptr) of a named group capture, or (0,nullptr) when no more groups matched
   virtual std::pair<size_t,const char*> group_next_id()
     /// @returns a pair of size_t and string
   {
     if (itr_ == fin_)
-      return std::pair<size_t,const char*>(0, NULL); 
+      return std::pair<size_t,const char*>(0, nullptr); 
     size_t n = (*itr_).size();
     while (++grp_ < n)
       if ((*itr_)[grp_].matched)
         break;
     if (grp_ < n)
-      return std::pair<size_t,const char*>(grp_, NULL);
-    return std::pair<size_t,const char*>(1, NULL);
+      return std::pair<size_t,const char*>(grp_, nullptr);
+    return std::pair<size_t,const char*>(1, nullptr);
   }
  protected:
   /// The match method Const::SCAN, Const::FIND, Const::SPLIT, or Const::MATCH, implemented with std::regex.
@@ -357,7 +357,7 @@ class StdMatcher : public PatternMatcher<std::regex> {
       flg |= std::regex_constants::match_not_null;
     else if (method == Const::MATCH)
       flg |= std::regex_constants::match_continuous;
-    ASSERT(pat_ != NULL);
+    ASSERT(pat_ != nullptr);
     itr_ = std::cregex_iterator(txt_, buf_ + end_, *pat_, flg);
   }
   std::regex_constants::match_flag_type flg_; ///< std::regex match flags
@@ -379,7 +379,7 @@ class StdEcmaMatcher : public StdMatcher {
   StdEcmaMatcher(
       const char  *pattern,         ///< a string regex for this matcher
       const Input& input = Input(), ///< input character sequence for this matcher
-      const char  *opt = NULL)      ///< option string of the form `(A|N|T(=[[:digit:]])?|;)*`
+      const char  *opt = nullptr)      ///< option string of the form `(A|N|T(=[[:digit:]])?|;)*`
     :
       StdMatcher(new std::regex(pattern, std::regex::ECMAScript), input, opt)
   {
@@ -389,7 +389,7 @@ class StdEcmaMatcher : public StdMatcher {
   StdEcmaMatcher(
       const std::string& pattern,         ///< a string regex for this matcher
       const Input&       input = Input(), ///< input character sequence for this matcher
-      const char        *opt = NULL)      ///< option string of the form `(A|N|T(=[[:digit:]])?|;)*`
+      const char        *opt = nullptr)      ///< option string of the form `(A|N|T(=[[:digit:]])?|;)*`
     :
       StdMatcher(new std::regex(pattern, std::regex::ECMAScript), input, opt)
   {
@@ -399,7 +399,7 @@ class StdEcmaMatcher : public StdMatcher {
   StdEcmaMatcher(
       const Pattern& pattern,         ///< a std::regex for this matcher
       const Input&   input = Input(), ///< input character sequence for this matcher
-      const char    *opt = NULL)      ///< option string of the form `(A|N|T(=[[:digit:]])?|;)*`
+      const char    *opt = nullptr)      ///< option string of the form `(A|N|T(=[[:digit:]])?|;)*`
     :
       StdMatcher(&pattern, input, opt)
   {
@@ -460,7 +460,7 @@ class StdPosixMatcher : public StdMatcher {
   StdPosixMatcher(
       const char  *pattern,         ///< a string regex for this matcher
       const Input& input = Input(), ///< input character sequence for this matcher
-      const char  *opt = NULL)      ///< option string of the form `(A|N|T(=[[:digit:]])?|;)*`
+      const char  *opt = nullptr)      ///< option string of the form `(A|N|T(=[[:digit:]])?|;)*`
     :
       StdMatcher(new std::regex(pattern, std::regex::awk), input, opt)
   {
@@ -470,7 +470,7 @@ class StdPosixMatcher : public StdMatcher {
   StdPosixMatcher(
       const std::string& pattern,         ///< a string regex for this matcher
       const Input&       input = Input(), ///< input character sequence for this matcher
-      const char        *opt = NULL)      ///< option string of the form `(A|N|T(=[[:digit:]])?|;)*`
+      const char        *opt = nullptr)      ///< option string of the form `(A|N|T(=[[:digit:]])?|;)*`
     :
       StdMatcher(new std::regex(pattern, std::regex::awk), input, opt)
   {
@@ -480,7 +480,7 @@ class StdPosixMatcher : public StdMatcher {
   StdPosixMatcher(
       const Pattern& pattern,         ///< a std::regex for this matcher
       const Input&   input = Input(), ///< input character sequence for this matcher
-      const char    *opt = NULL)      ///< option string of the form `(A|N|T(=[[:digit:]])?|;)*`
+      const char    *opt = nullptr)      ///< option string of the form `(A|N|T(=[[:digit:]])?|;)*`
     :
       StdMatcher(&pattern, input, opt)
   {

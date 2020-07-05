@@ -56,10 +56,10 @@ class PCRE2Matcher : public PatternMatcher<std::string> {
   PCRE2Matcher()
     :
       PatternMatcher<std::string>(),
-      opc_(NULL),
-      dat_(NULL),
-      ctx_(NULL),
-      stk_(NULL)
+      opc_(nullptr),
+      dat_(nullptr),
+      ctx_(nullptr),
+      stk_(nullptr)
   {
     reset();
   }
@@ -68,15 +68,15 @@ class PCRE2Matcher : public PatternMatcher<std::string> {
   PCRE2Matcher(
       const P     *pattern,         ///< points to a string regex for this matcher
       const Input& input = Input(), ///< input character sequence for this matcher
-      const char  *opt = NULL,      ///< option string of the form `(A|N|T(=[[:digit:]])?|;)*`
+      const char  *opt = nullptr,      ///< option string of the form `(A|N|T(=[[:digit:]])?|;)*`
       uint32_t     options = 0)     ///< pcre2_compile() options
     :
       PatternMatcher<std::string>(pattern, input, opt),
       cop_(options),
-      opc_(NULL),
-      dat_(NULL),
-      ctx_(NULL),
-      stk_(NULL)
+      opc_(nullptr),
+      dat_(nullptr),
+      ctx_(nullptr),
+      stk_(nullptr)
   {
     reset();
     compile();
@@ -86,15 +86,15 @@ class PCRE2Matcher : public PatternMatcher<std::string> {
   PCRE2Matcher(
       const P&     pattern,         ///< a string regex for this matcher
       const Input& input = Input(), ///< input character sequence for this matcher
-      const char  *opt = NULL,      ///< option string of the form `(A|N|T(=[[:digit:]])?|;)*`
+      const char  *opt = nullptr,      ///< option string of the form `(A|N|T(=[[:digit:]])?|;)*`
       uint32_t     options = 0)     ///< pcre2_compile() options
     :
       PatternMatcher<std::string>(pattern, input, opt),
       cop_(options),
-      opc_(NULL),
-      dat_(NULL),
-      ctx_(NULL),
-      stk_(NULL)
+      opc_(nullptr),
+      dat_(nullptr),
+      ctx_(nullptr),
+      stk_(nullptr)
   {
     reset();
     compile();
@@ -105,18 +105,18 @@ class PCRE2Matcher : public PatternMatcher<std::string> {
       PatternMatcher<std::string>(matcher),
       cop_(matcher.cop_),
       flg_(matcher.flg_),
-      opc_(NULL),
-      dat_(NULL),
-      ctx_(NULL),
-      stk_(NULL)
+      opc_(nullptr),
+      dat_(nullptr),
+      ctx_(nullptr),
+      stk_(nullptr)
   {
     reset();
     cop_ = matcher.cop_;
     flg_ = matcher.flg_;
 #ifdef pcre2_code_copy_with_tables
     opc_ = pcre2_code_copy_with_tables(matcher.opc_);
-    dat_ = pcre2_match_data_create_from_pattern(opc_, NULL);
-    jit_ = matcher.jit_ && pcre2_jit_compile(opc_, PCRE2_JIT_PARTIAL_HARD) == 0 && pcre2_pattern_info(opc_, PCRE2_INFO_JITSIZE, NULL) != 0;
+    dat_ = pcre2_match_data_create_from_pattern(opc_, nullptr);
+    jit_ = matcher.jit_ && pcre2_jit_compile(opc_, PCRE2_JIT_PARTIAL_HARD) == 0 && pcre2_pattern_info(opc_, PCRE2_INFO_JITSIZE, nullptr) != 0;
 #else
     compile();
 #endif
@@ -124,13 +124,13 @@ class PCRE2Matcher : public PatternMatcher<std::string> {
   /// Delete matcher.
   virtual ~PCRE2Matcher()
   {
-    if (stk_ != NULL)
+    if (stk_ != nullptr)
       pcre2_jit_stack_free(stk_);
-    if (ctx_ != NULL)
+    if (ctx_ != nullptr)
       pcre2_match_context_free(ctx_);
-    if (dat_ != NULL)
+    if (dat_ != nullptr)
       pcre2_match_data_free(dat_);
-    if (opc_ != NULL)
+    if (opc_ != nullptr)
       pcre2_code_free(opc_);
   }
   /// Assign a matcher.
@@ -146,18 +146,18 @@ class PCRE2Matcher : public PatternMatcher<std::string> {
     return new PCRE2Matcher(*this);
   }
   /// Reset this matcher's state to the initial state and when assigned new input.
-  virtual void reset(const char *opt = NULL)
+  virtual void reset(const char *opt = nullptr)
   {
     DBGLOG("PCRE2Matcher::reset()");
     flg_ = 0;
     grp_ = 0;
     PatternMatcher::reset(opt);
-    if (ctx_ == NULL)
-      ctx_ = pcre2_match_context_create(NULL);
-    if (ctx_ != NULL && stk_ == NULL)
+    if (ctx_ == nullptr)
+      ctx_ = pcre2_match_context_create(nullptr);
+    if (ctx_ != nullptr && stk_ == nullptr)
     {
-      stk_ = pcre2_jit_stack_create(32*1024, 512*1024, NULL);
-      pcre2_jit_stack_assign(ctx_, NULL, stk_);
+      stk_ = pcre2_jit_stack_create(32*1024, 512*1024, nullptr);
+      pcre2_jit_stack_assign(ctx_, nullptr, stk_);
     }
   }
   using PatternMatcher::pattern;
@@ -169,19 +169,19 @@ class PCRE2Matcher : public PatternMatcher<std::string> {
     cop_ = matcher.cop_;
     flg_ = matcher.flg_;
 #ifdef pcre2_code_copy_with_tables
-    if (dat_ != NULL)
+    if (dat_ != nullptr)
     {
       pcre2_match_data_free(dat_);
-      dat_ = NULL;
+      dat_ = nullptr;
     }
-    if (opc_ != NULL)
+    if (opc_ != nullptr)
     {
       pcre2_code_free(opc_);
-      opc_ = NULL;
+      opc_ = nullptr;
     }
     opc_ = pcre2_code_copy_with_tables(matcher.opc_);
-    dat_ = pcre2_match_data_create_from_pattern(opc_, NULL);
-    jit_ = matcher.jit_ && pcre2_jit_compile(opc_, PCRE2_JIT_PARTIAL_HARD) == 0 && pcre2_pattern_info(opc_, PCRE2_INFO_JITSIZE, NULL) != 0;
+    dat_ = pcre2_match_data_create_from_pattern(opc_, nullptr);
+    jit_ = matcher.jit_ && pcre2_jit_compile(opc_, PCRE2_JIT_PARTIAL_HARD) == 0 && pcre2_pattern_info(opc_, PCRE2_INFO_JITSIZE, nullptr) != 0;
 #else
     compile();
 #endif
@@ -218,39 +218,39 @@ class PCRE2Matcher : public PatternMatcher<std::string> {
   {
     if (n == 0)
       return std::pair<const char*,size_t>(txt_, len_);
-    if (dat_ == NULL || n >= pcre2_get_ovector_count(dat_))
-      return std::pair<const char*,size_t>(NULL, 0);
+    if (dat_ == nullptr || n >= pcre2_get_ovector_count(dat_))
+      return std::pair<const char*,size_t>(nullptr, 0);
     PCRE2_SIZE *ovector = pcre2_get_ovector_pointer(dat_);
     size_t n2 = 2 * n;
     if (ovector[n2] == PCRE2_UNSET)
-      return std::pair<const char*,size_t>(NULL, 0);
+      return std::pair<const char*,size_t>(nullptr, 0);
     return std::pair<const char*,size_t>(buf_ + ovector[n2], ovector[n2 + 1] - ovector[n2]);
   }
-  /// Returns the group capture identifier containing the group capture index >0 and name (or NULL) of a named group capture, or (1,NULL) by default
+  /// Returns the group capture identifier containing the group capture index >0 and name (or nullptr) of a named group capture, or (1,nullptr) by default
   virtual std::pair<size_t,const char*> group_id()
     /// @returns a pair of size_t and string
   {
     grp_ = 1;
-    if (dat_ == NULL || pcre2_get_ovector_count(dat_) <= 1)
-      return std::pair<size_t,const char*>(0, NULL);
+    if (dat_ == nullptr || pcre2_get_ovector_count(dat_) <= 1)
+      return std::pair<size_t,const char*>(0, nullptr);
     PCRE2_SIZE *ovector = pcre2_get_ovector_pointer(dat_);
     if (ovector[2] == PCRE2_UNSET)
       return group_next_id();
     return id();
   }
-  /// Returns the next group capture identifier containing the group capture index >0 and name (or NULL) of a named group capture, or (0,NULL) when no more groups matched
+  /// Returns the next group capture identifier containing the group capture index >0 and name (or nullptr) of a named group capture, or (0,nullptr) when no more groups matched
   virtual std::pair<size_t,const char*> group_next_id()
     /// @returns a pair of size_t and string
   {
-    if (dat_ == NULL)
-      return std::pair<size_t,const char*>(0, NULL);
+    if (dat_ == nullptr)
+      return std::pair<size_t,const char*>(0, nullptr);
     PCRE2_SIZE n = pcre2_get_ovector_count(dat_);
     PCRE2_SIZE *ovector = pcre2_get_ovector_pointer(dat_);
     while (++grp_ < n)
       if (ovector[2 * grp_] != PCRE2_UNSET)
         break;
     if (grp_ >= n)
-      return std::pair<size_t,const char*>(0, NULL);
+      return std::pair<size_t,const char*>(0, nullptr);
     return id();
   }
  protected:
@@ -258,12 +258,12 @@ class PCRE2Matcher : public PatternMatcher<std::string> {
   std::pair<size_t,const char*> id()
   {
     PCRE2_SIZE name_count = 0;;
-    PCRE2_SPTR name_table = NULL;
+    PCRE2_SPTR name_table = nullptr;
     PCRE2_SIZE name_entry_size = 0;
     (void)pcre2_pattern_info(opc_, PCRE2_INFO_NAMECOUNT, &name_count);
     (void)pcre2_pattern_info(opc_, PCRE2_INFO_NAMETABLE, &name_table);
     (void)pcre2_pattern_info(opc_, PCRE2_INFO_NAMEENTRYSIZE, &name_entry_size);
-    if (name_table != NULL)
+    if (name_table != nullptr)
     {
       while (name_count > 0)
       {
@@ -273,34 +273,34 @@ class PCRE2Matcher : public PatternMatcher<std::string> {
           return std::pair<size_t,const char*>(grp_, reinterpret_cast<const char*>(p + 2));
       }
     }
-    return std::pair<size_t,const char*>(grp_, NULL);
+    return std::pair<size_t,const char*>(grp_, nullptr);
   }
   /// Compile pattern for jit partial matching and allocate match data.
   void compile()
   {
     DBGLOG("BEGIN PCRE2Matcher::compile()");
-    if (dat_ != NULL)
+    if (dat_ != nullptr)
     {
       pcre2_match_data_free(dat_);
-      dat_ = NULL;
+      dat_ = nullptr;
     }
-    if (opc_ != NULL)
+    if (opc_ != nullptr)
     {
       pcre2_code_free(opc_);
-      opc_ = NULL;
+      opc_ = nullptr;
     }
     int err;
     PCRE2_SIZE pos;
-    ASSERT(pat_ != NULL);
-    opc_ = pcre2_compile(reinterpret_cast<PCRE2_SPTR>(pat_->c_str()), static_cast<PCRE2_SIZE>(pat_->size()), cop_, &err, &pos, NULL);
-    if (opc_ == NULL)
+    ASSERT(pat_ != nullptr);
+    opc_ = pcre2_compile(reinterpret_cast<PCRE2_SPTR>(pat_->c_str()), static_cast<PCRE2_SIZE>(pat_->size()), cop_, &err, &pos, nullptr);
+    if (opc_ == nullptr)
     {
       PCRE2_UCHAR message[120];
       pcre2_get_error_message(err, message, sizeof(message));
       throw regex_error(reinterpret_cast<char*>(message), *pat_, pos);
     }
-    jit_ = pcre2_jit_compile(opc_, PCRE2_JIT_PARTIAL_HARD) == 0 && pcre2_pattern_info(opc_, PCRE2_INFO_JITSIZE, NULL) != 0;
-    dat_ = pcre2_match_data_create_from_pattern(opc_, NULL);
+    jit_ = pcre2_jit_compile(opc_, PCRE2_JIT_PARTIAL_HARD) == 0 && pcre2_pattern_info(opc_, PCRE2_INFO_JITSIZE, nullptr) != 0;
+    dat_ = pcre2_match_data_create_from_pattern(opc_, nullptr);
     DBGLOGN("jit=%d", jit_);
   }
   /// The match method Const::SCAN, Const::FIND, Const::SPLIT, or Const::MATCH, implemented with PCRE2.
@@ -477,7 +477,7 @@ class PCRE2UTFMatcher : public PCRE2Matcher {
   PCRE2UTFMatcher(
       const P     *pattern,         ///< points to a string regex for this matcher
       const Input& input = Input(), ///< input character sequence for this matcher
-      const char  *opt = NULL)      ///< option string of the form `(A|N|T(=[[:digit:]])?|;)*`
+      const char  *opt = nullptr)      ///< option string of the form `(A|N|T(=[[:digit:]])?|;)*`
     :
       PCRE2Matcher(pattern, input, opt, PCRE2_UTF | PCRE2_UCP)
   { }
@@ -486,7 +486,7 @@ class PCRE2UTFMatcher : public PCRE2Matcher {
   PCRE2UTFMatcher(
       const P&     pattern,         ///< a string regex for this matcher
       const Input& input = Input(), ///< input character sequence for this matcher
-      const char  *opt = NULL)      ///< option string of the form `(A|N|T(=[[:digit:]])?|;)*`
+      const char  *opt = nullptr)      ///< option string of the form `(A|N|T(=[[:digit:]])?|;)*`
     :
       PCRE2Matcher(pattern, input, opt, PCRE2_UTF | PCRE2_UCP)
   { }

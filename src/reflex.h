@@ -136,7 +136,7 @@ class Reflex
  private:
   void        init(int argc, char **argv);
   void        version();
-  void        help(const char *message = NULL, const char *arg = NULL);
+  void        help(const char *message = nullptr, const char *arg = nullptr);
   void        set_library();
   void        parse();
   void        parse_section_1();
@@ -167,7 +167,7 @@ class Reflex
   bool        get_line();
   bool        skip_comment(size_t& pos);
   bool        is(const char *s);
-  bool        br(size_t pos, const char *s = NULL);
+  bool        br(size_t pos, const char *s = nullptr);
   bool        as(size_t& pos, const char *s);
   bool        ws(size_t& pos);
   bool        eq(size_t& pos);
@@ -186,9 +186,9 @@ class Reflex
   std::string escape_bs(const std::string& s);
   std::string upper_name(const std::string& s);
   bool        get_starts(size_t& pos, Starts& starts);
-  void        abort(const char *message, const char *arg = NULL);
-  void        error(const char *message, const char *arg = NULL, size_t at_lineno = 0);
-  void        warning(const char *message, const char *arg = NULL, size_t at_lineno = 0);
+  void        abort(const char *message, const char *arg = nullptr);
+  void        error(const char *message, const char *arg = nullptr, size_t at_lineno = 0);
+  void        warning(const char *message, const char *arg = nullptr, size_t at_lineno = 0);
   const char *SGR(const char *code) { return color_term ? code : ""; }
 
  protected:

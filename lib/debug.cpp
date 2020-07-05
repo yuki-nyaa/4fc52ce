@@ -39,7 +39,7 @@ See `debug.h` for details.
 #include <stdio.h>
 #include <cstring>
 
-FILE *REFLEX_DBGFD_ = NULL;
+FILE *REFLEX_DBGFD_ = nullptr;
 
 extern "C" {
 
@@ -49,7 +49,7 @@ extern "C" {
 void REFLEX_DBGOUT_(const char *log, const char *file, int line)
 {
   SYSTEMTIME tm;
-  if (REFLEX_DBGFD_ == NULL && (log[0] == '.' || ::fopen_s(&REFLEX_DBGFD_, log, "a")))
+  if (REFLEX_DBGFD_ == nullptr && (log[0] == '.' || ::fopen_s(&REFLEX_DBGFD_, log, "a")))
     REFLEX_DBGFD_ = stderr;
   GetLocalTime(&tm);
   ::fprintf(REFLEX_DBGFD_, "\n%02d%02d%02d/%02d%02d%02d.%03d%14.14s:%-5d", tm.wYear%100, tm.wMonth, tm.wDay, tm.wHour, tm.wMinute, tm.wSecond, tm.wMilliseconds, file, line);
@@ -68,9 +68,9 @@ void REFLEX_DBGOUT_(const char *log, const char *file, int line)
     name++;
   else
     name = file;
-  if (REFLEX_DBGFD_ == NULL && (log[0] == '.' || (REFLEX_DBGFD_ = ::fopen(log, "a")) == NULL))
+  if (REFLEX_DBGFD_ == nullptr && (log[0] == '.' || (REFLEX_DBGFD_ = ::fopen(log, "a")) == nullptr))
     REFLEX_DBGFD_ = stderr;
-  gettimeofday(&tv, NULL);
+  gettimeofday(&tv, nullptr);
   localtime_r(&tv.tv_sec, &tm);
   ::fprintf(REFLEX_DBGFD_, "\n%02d%02d%02d/%02d%02d%02d.%06ld%14.14s:%-5d", tm.tm_year%100, tm.tm_mon+1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec, static_cast<long>(tv.tv_usec), name, line);
 }

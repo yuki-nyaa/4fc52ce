@@ -45,7 +45,7 @@ int main(int argc, char **argv)
         uint16_t flags = 0;
         if (argc > 3)
         {
-          unsigned long n = strtoul(argv[3], NULL, 10);
+          unsigned long n = strtoul(argv[3], nullptr, 10);
           if (n > 255)
           {
             fprintf(stderr, "max_error too large\n\n");
@@ -54,11 +54,11 @@ int main(int argc, char **argv)
           max = static_cast<uint8_t>(n);
           if (argc > 4)
           {
-            if (strchr(argv[4], 'i') != NULL)
+            if (strchr(argv[4], 'i') != nullptr)
               flags |= reflex::FuzzyMatcher::INS;
-            if (strchr(argv[4], 'd') != NULL)
+            if (strchr(argv[4], 'd') != nullptr)
               flags |= reflex::FuzzyMatcher::DEL;
-            if (strchr(argv[4], 's') != NULL)
+            if (strchr(argv[4], 's') != nullptr)
               flags |= reflex::FuzzyMatcher::SUB;
           }
         }

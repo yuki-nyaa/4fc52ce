@@ -82,18 +82,18 @@ class Pattern {
   /// Construct an unset pattern.
   Pattern()
     :
-      opc_(NULL),
+      opc_(nullptr),
       nop_(0),
-      fsm_(NULL)
+      fsm_(nullptr)
   { }
   /// Construct a pattern object given a regex string.
   explicit Pattern(
       const char *regex,
-      const char *options = NULL)
+      const char *options = nullptr)
     :
       rex_(regex),
-      opc_(NULL),
-      fsm_(NULL)
+      opc_(nullptr),
+      fsm_(nullptr)
   {
     init(options);
   }
@@ -103,19 +103,19 @@ class Pattern {
       const std::string& options)
     :
       rex_(regex),
-      opc_(NULL),
-      fsm_(NULL)
+      opc_(nullptr),
+      fsm_(nullptr)
   {
     init(options.c_str());
   }
   /// Construct a pattern object given a regex string.
   explicit Pattern(
       const std::string& regex,
-      const char        *options = NULL)
+      const char        *options = nullptr)
     :
       rex_(regex),
-      opc_(NULL),
-      fsm_(NULL)
+      opc_(nullptr),
+      fsm_(nullptr)
   {
     init(options);
   }
@@ -125,32 +125,32 @@ class Pattern {
       const std::string& options)
     :
       rex_(regex),
-      opc_(NULL),
-      fsm_(NULL)
+      opc_(nullptr),
+      fsm_(nullptr)
   {
     init(options.c_str());
   }
   /// Construct a pattern object given an opcode table.
   explicit Pattern(
       const Opcode  *code,
-      const uint8_t *pred = NULL)
+      const uint8_t *pred = nullptr)
     :
       opc_(code),
       nop_(0),
-      fsm_(NULL)
+      fsm_(nullptr)
   {
-    init(NULL, pred);
+    init(nullptr, pred);
   }
   /// Construct a pattern object given a function pointer to FSM code.
   explicit Pattern(
       FSM            fsm,
-      const uint8_t *pred = NULL)
+      const uint8_t *pred = nullptr)
     :
-      opc_(NULL),
+      opc_(nullptr),
       nop_(0),
       fsm_(fsm)
   {
-    init(NULL, pred);
+    init(nullptr, pred);
   }
   /// Copy constructor.
   Pattern(const Pattern& pattern) ///< pattern to copy
@@ -166,16 +166,16 @@ class Pattern {
   void clear()
   {
     rex_.clear();
-    if (nop_ > 0 && opc_ != NULL)
+    if (nop_ > 0 && opc_ != nullptr)
       delete[] opc_;
-    opc_ = NULL;
+    opc_ = nullptr;
     nop_ = 0;
-    fsm_ = NULL;
+    fsm_ = nullptr;
   }
   /// Assign a (new) pattern.
   Pattern& assign(
       const char *regex,
-      const char *options = NULL)
+      const char *options = nullptr)
   {
     clear();
     rex_ = regex;
@@ -192,7 +192,7 @@ class Pattern {
   /// Assign a (new) pattern.
   Pattern& assign(
       const std::string& regex,
-      const char        *options = NULL)
+      const char        *options = nullptr)
   {
     return assign(regex.c_str(), options);
   }
@@ -206,21 +206,21 @@ class Pattern {
   /// Assign a (new) pattern.
   Pattern& assign(
       const Opcode  *code,
-      const uint8_t *pred = NULL)
+      const uint8_t *pred = nullptr)
   {
     clear();
     opc_ = code;
-    init(NULL, pred);
+    init(nullptr, pred);
     return *this;
   }
   /// Assign a (new) pattern.
   Pattern& assign(
       FSM            fsm,
-      const uint8_t *pred = NULL)
+      const uint8_t *pred = nullptr)
   {
     clear();
     fsm_ = fsm;
-    init(NULL, pred);
+    init(nullptr, pred);
     return *this;
   }
   /// Assign a (new) pattern.
@@ -237,7 +237,7 @@ class Pattern {
     vms_ = pattern.vms_;
     ems_ = pattern.ems_;
     wms_ = pattern.wms_;
-    if (pattern.nop_ > 0 && pattern.opc_ != NULL)
+    if (pattern.nop_ > 0 && pattern.opc_ != nullptr)
     {
       nop_ = pattern.nop_;
       Opcode *code = new Opcode[nop_];
@@ -281,7 +281,7 @@ class Pattern {
   bool empty() const
     /// @return true if this pattern is not assigned
   {
-    return opc_ == NULL && fsm_ == NULL;
+    return opc_ == nullptr && fsm_ == nullptr;
   }
   /// Get subpattern regex of this pattern object or the whole regex with index 0.
   const std::string operator[](Accept choice) const
@@ -485,7 +485,7 @@ class Pattern {
           accept(0)
       {
         for (int i = 0; i < 256; ++i)
-          edge[i] = NULL;
+          edge[i] = nullptr;
       }
       Node  *edge[256]; ///< 256 edges, one per 8-bit char
       Accept accept;    ///< nonzero if final state, the index of an accepted/captured subpattern
@@ -494,7 +494,7 @@ class Pattern {
     static const uint16_t ALLOC = 64; ///< allocate 64 nodes at a time, to improve performance
     Tree()
       :
-        tree(NULL),
+        tree(nullptr),
         next(ALLOC)
     { }
     ~Tree()
@@ -511,12 +511,12 @@ class Pattern {
     /// return the root of the tree.
     Node *root()
     {
-      return tree != NULL ? tree : (tree = leaf());
+      return tree != nullptr ? tree : (tree = leaf());
     }
     /// create an edge from a tree node to a target tree node, return the target tree node.
     Node *edge(Node *node, Char c)
     {
-      return node->edge[c] != NULL ? node->edge[c] : (node->edge[c] = leaf());
+      return node->edge[c] != nullptr ? node->edge[c] : (node->edge[c] = leaf());
     }
     /// create a new leaf node.
     Node *leaf()
@@ -528,7 +528,7 @@ class Pattern {
       }
       return &list.back()[next++];
     }
-    Node    *tree; ///< root of the tree or NULL
+    Node    *tree; ///< root of the tree or nullptr
     List     list; ///< block allocation list
     uint16_t next; ///< block allocation, next available slot in last block
   };
@@ -538,10 +538,10 @@ class Pattern {
       typedef std::map<Char,std::pair<Char,State*> > Edges;
       State()
         :
-          next(NULL),
-          left(NULL),
-          right(NULL),
-          tnode(NULL),
+          next(nullptr),
+          left(nullptr),
+          right(nullptr),
+          tnode(nullptr),
           first(0),
           index(0),
           accept(0),
@@ -649,7 +649,7 @@ class Pattern {
   /// Initialize the pattern at construction.
   void init(
       const char    *options,
-      const uint8_t *pred = NULL);
+      const uint8_t *pred = nullptr);
   void init_options(const char *options);
   void parse(
       Positions& startpos,
@@ -706,7 +706,7 @@ class Pattern {
       Iter&      iter);
   Char parse_esc(
       Location& loc,
-      Chars    *chars = NULL) const;
+      Chars    *chars = nullptr) const;
   void compile(
       DFA::State *start,
       Follow&     followpos,

@@ -151,7 +151,7 @@ class Bits {
   Bits()
     :
       len_(0),
-      vec_(NULL)
+      vec_(nullptr)
   { }
   /// Copy constructor
   Bits(const Bits& bits) ///< bits to copy
@@ -162,7 +162,7 @@ class Bits {
   Bits(size_t n) ///< n'th bit to set
     :
       len_(0),
-      vec_(NULL)
+      vec_(nullptr)
   {
     insert(n);
   }
@@ -172,7 +172,7 @@ class Bits {
       size_t n2) ///< last bit to set
     :
       len_(0),
-      vec_(NULL)
+      vec_(nullptr)
   {
     insert(n1, n2);
   }
@@ -190,7 +190,7 @@ class Bits {
     if (len_)
       std::memcpy(vec_ = new uint64_t[len_], bits.vec_, len_ << 3);
     else
-      vec_ = NULL;
+      vec_ = nullptr;
     return *this;
   }
   /// Reference n'th bit in the bit vector to assign a value to that bit.

@@ -28,7 +28,7 @@ int main(int argc, char **argv)
         boost::regex boost_pattern(regex, boost::regex_constants::no_empty_expressions);
         reflex::BoostPosixMatcher boostmatcher(boost_pattern, text, opts);
         if (argc > 3)
-          boostmatcher.buffer(strtoul(argv[3], NULL, 10));
+          boostmatcher.buffer(strtoul(argv[3], nullptr, 10));
         if (!boostmatcher.matches())
 	{
           printf("No match\n");
@@ -44,17 +44,17 @@ int main(int argc, char **argv)
 	}
         boostmatcher.input(text);
         if (argc > 3)
-          boostmatcher.buffer(strtoul(argv[3], NULL, 10));
+          boostmatcher.buffer(strtoul(argv[3], nullptr, 10));
         while (boostmatcher.scan())
           printf("Scan %zu '%s'\n", boostmatcher.accept(), boostmatcher.text());
         boostmatcher.input(text);
         if (argc > 3)
-          boostmatcher.buffer(strtoul(argv[3], NULL, 10));
+          boostmatcher.buffer(strtoul(argv[3], nullptr, 10));
         while (boostmatcher.find())
           printf("Find %zu '%s' at %zu,%zu spans %zu..%zu %s\n", boostmatcher.accept(), boostmatcher.text(), boostmatcher.lineno(), boostmatcher.columno(), boostmatcher.first(), boostmatcher.last(), boostmatcher.at_end() ? "till end" : "");
         boostmatcher.input(text);
         if (argc > 3)
-          boostmatcher.buffer(strtoul(argv[3], NULL, 10));
+          boostmatcher.buffer(strtoul(argv[3], nullptr, 10));
         while (boostmatcher.split())
           printf("Split %zu '%s' at %zu\n", boostmatcher.accept(), boostmatcher.text(), boostmatcher.columno());
       }
@@ -71,7 +71,7 @@ int main(int argc, char **argv)
         boost::regex boost_pattern(regex, boost::regex_constants::no_empty_expressions);
         reflex::BoostPerlMatcher boostmatcher(boost_pattern, text, opts);
         if (argc > 3)
-          boostmatcher.buffer(strtoul(argv[3], NULL, 10));
+          boostmatcher.buffer(strtoul(argv[3], nullptr, 10));
         if (!boostmatcher.matches())
 	{
           printf("No match\n");
@@ -87,17 +87,17 @@ int main(int argc, char **argv)
 	}
         boostmatcher.input(text);
         if (argc > 3)
-          boostmatcher.buffer(strtoul(argv[3], NULL, 10));
+          boostmatcher.buffer(strtoul(argv[3], nullptr, 10));
         while (boostmatcher.scan())
           printf("Scan %zu '%s'\n", boostmatcher.accept(), boostmatcher.text());
         boostmatcher.input(text);
         if (argc > 3)
-          boostmatcher.buffer(strtoul(argv[3], NULL, 10));
+          boostmatcher.buffer(strtoul(argv[3], nullptr, 10));
         while (boostmatcher.find())
           printf("Find %zu '%s' at %zu,%zu spans %zu..%zu %s\n", boostmatcher.accept(), boostmatcher.text(), boostmatcher.lineno(), boostmatcher.columno(), boostmatcher.first(), boostmatcher.last(), boostmatcher.at_end() ? "at end" : "");
         boostmatcher.input(text);
         if (argc > 3)
-          boostmatcher.buffer(strtoul(argv[3], NULL, 10));
+          boostmatcher.buffer(strtoul(argv[3], nullptr, 10));
         while (boostmatcher.split())
           printf("Split %zu '%s' at %zu\n", boostmatcher.accept(), boostmatcher.text(), boostmatcher.columno());
       }
@@ -114,7 +114,7 @@ int main(int argc, char **argv)
         std::string pcre2_pattern(regex);
         reflex::PCRE2Matcher pcre2matcher(pcre2_pattern, text, opts);
         if (argc > 3)
-          pcre2matcher.buffer(strtoul(argv[3], NULL, 10));
+          pcre2matcher.buffer(strtoul(argv[3], nullptr, 10));
         if (!pcre2matcher.matches())
 	{
           printf("No match\n");
@@ -130,17 +130,17 @@ int main(int argc, char **argv)
 	}
         pcre2matcher.input(text);
         if (argc > 3)
-          pcre2matcher.buffer(strtoul(argv[3], NULL, 10));
+          pcre2matcher.buffer(strtoul(argv[3], nullptr, 10));
         while (pcre2matcher.scan())
           printf("Scan %zu '%s'\n", pcre2matcher.accept(), pcre2matcher.text());
         pcre2matcher.input(text);
         if (argc > 3)
-          pcre2matcher.buffer(strtoul(argv[3], NULL, 10));
+          pcre2matcher.buffer(strtoul(argv[3], nullptr, 10));
         while (pcre2matcher.find())
           printf("Find %zu '%s' at %zu,%zu spans %zu..%zu %s\n", pcre2matcher.accept(), pcre2matcher.text(), pcre2matcher.lineno(), pcre2matcher.columno(), pcre2matcher.first(), pcre2matcher.last(), pcre2matcher.at_end() ? "at end" : "");
         pcre2matcher.input(text);
         if (argc > 3)
-          pcre2matcher.buffer(strtoul(argv[3], NULL, 10));
+          pcre2matcher.buffer(strtoul(argv[3], nullptr, 10));
         while (pcre2matcher.split())
           printf("Split %zu '%s' at %zu\n", pcre2matcher.accept(), pcre2matcher.text(), pcre2matcher.columno());
       }
@@ -156,7 +156,7 @@ int main(int argc, char **argv)
         printf(" with converted regex: %s\n\n", regex.c_str());
         reflex::StdMatcher stdmatcher(regex, text, opts);
         if (argc > 3)
-          stdmatcher.buffer(strtoul(argv[3], NULL, 10));
+          stdmatcher.buffer(strtoul(argv[3], nullptr, 10));
         if (!stdmatcher.matches())
 	{
           printf("No match\n");
@@ -170,17 +170,17 @@ int main(int argc, char **argv)
 	}
         stdmatcher.input(text);
         if (argc > 3)
-          stdmatcher.buffer(strtoul(argv[3], NULL, 10));
+          stdmatcher.buffer(strtoul(argv[3], nullptr, 10));
         while (stdmatcher.scan())
           printf("Scan %zu '%s'\n", stdmatcher.accept(), stdmatcher.text());
         stdmatcher.input(text);
         if (argc > 3)
-          stdmatcher.buffer(strtoul(argv[3], NULL, 10));
+          stdmatcher.buffer(strtoul(argv[3], nullptr, 10));
         while (stdmatcher.find())
           printf("Find %zu '%s' at %zu,%zu spans %zu..%zu %s\n", stdmatcher.accept(), stdmatcher.text(), stdmatcher.lineno(), stdmatcher.columno(), stdmatcher.first(), stdmatcher.last(), stdmatcher.at_end() ? "at end" : "");
         stdmatcher.input(text);
         if (argc > 3)
-          stdmatcher.buffer(strtoul(argv[3], NULL, 10));
+          stdmatcher.buffer(strtoul(argv[3], nullptr, 10));
         while (stdmatcher.split())
           printf("Split %zu '%s' at %zu\n", stdmatcher.accept(), stdmatcher.text(), stdmatcher.columno());
       }
@@ -199,24 +199,24 @@ int main(int argc, char **argv)
         const char *text = argv[2];
         reflex::Matcher matcher(reflex_pattern, text, opts);
         if (argc > 3)
-          matcher.buffer(strtoul(argv[3], NULL, 10));
+          matcher.buffer(strtoul(argv[3], nullptr, 10));
         if (!matcher.matches())
           printf("No match\n");
         else
           printf("Match\n");
         matcher.input(text);
         if (argc > 3)
-          matcher.buffer(strtoul(argv[3], NULL, 10));
+          matcher.buffer(strtoul(argv[3], nullptr, 10));
         while (matcher.scan())
           printf("Scan %zu '%s'\n", matcher.accept(), matcher.text());
         matcher.input(text);
         if (argc > 3)
-          matcher.buffer(strtoul(argv[3], NULL, 10));
+          matcher.buffer(strtoul(argv[3], nullptr, 10));
         while (matcher.find())
           printf("Find %zu '%s' at %zu,%zu spans %zu..%zu %s\n", matcher.accept(), matcher.text(), matcher.lineno(), matcher.columno(), matcher.first(), matcher.last(), matcher.at_end() ? "at end" : "");
         matcher.input(text);
         if (argc > 3)
-          matcher.buffer(strtoul(argv[3], NULL, 10));
+          matcher.buffer(strtoul(argv[3], nullptr, 10));
         while (matcher.split())
           printf("Split %zu '%s' at %zu\n", matcher.accept(), matcher.text(), matcher.columno());
       }

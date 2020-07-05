@@ -230,13 +230,13 @@ Test tests[] = {
 #endif
   // Unicode
   { "(©)+", "", "", "©", { 1 } },
-  { NULL, NULL, NULL, NULL, { } }
+  { nullptr, nullptr, nullptr, nullptr, { } }
 };
 
 int main()
 {
   banner("PATTERN TESTS");
-  for (const Test *test = tests; test->pattern != NULL; ++test)
+  for (const Test *test = tests; test->pattern != nullptr; ++test)
   {
     std::string regex;
     try

@@ -246,13 +246,13 @@ Test tests[] = {
   // { "(?m)[ \\t]*\\i|^[ \\t]+|[ \\t]*\\j|a|[ \\n]|(?^\\\\\n[ \\t]*)", "m", "", "a\n  a\n  a\\\na\n    a\n  a\na\n", { 4, 5, 1, 4, 5, 2, 4, 4, 5, 1, 4, 5, 2, 3, 4, 5, 3, 4, 5 } }, // TODO line continuation stopping at left margin triggers dedent
   // Unicode or UTF-8 (TODO: requires a flag and changes to the parser so that UTF-8 multibyte chars are parsed as ONE char)
   { "(©)+", "", "", "©", { 1 } },
-  { NULL, NULL, NULL, NULL, { } }
+  { nullptr, nullptr, nullptr, nullptr, { } }
 };
 
 int main()
 {
   banner("PATTERN TESTS");
-  for (const Test *test = tests; test->pattern != NULL; ++test)
+  for (const Test *test = tests; test->pattern != nullptr; ++test)
   {
     Pattern pattern(test->pattern, test->popts);
     Matcher matcher(pattern, test->cstring, test->mopts);

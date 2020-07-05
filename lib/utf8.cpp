@@ -38,11 +38,11 @@
 
 namespace reflex {
 
-static const char *regex_char(char *buf, int a, int esc, size_t *n = NULL)
+static const char *regex_char(char *buf, int a, int esc, size_t *n = nullptr)
 {
   static const char digits[] = "0123456789abcdef";
   if (a >= '!' && a <= '~' && a != '#' && a != '-' && a != '[' && a != '\\' && a != ']' && a != '^' &&
-      (n != NULL || (a <= 'z' && a != '$' && a != '(' && a != ')' && a != '*' && a != '+' && a != '.' && a != '?'))
+      (n != nullptr || (a <= 'z' && a != '$' && a != '(' && a != ')' && a != '*' && a != '+' && a != '.' && a != '?'))
      )
   {
     buf[0] = a;
@@ -155,7 +155,7 @@ std::string utf8(int a, int b, int esc, const char *par, bool strict)
   size_t n = utf8(a, at);
   size_t m = utf8(b, bt);
   const unsigned char *as = reinterpret_cast<const unsigned char*>(at);
-  const unsigned char *bs = NULL;
+  const unsigned char *bs = nullptr;
   std::string regex;
   if (strict)
   {

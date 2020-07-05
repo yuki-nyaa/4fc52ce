@@ -61,7 +61,7 @@ class Matcher : public PatternMatcher<reflex::Pattern> {
   Matcher(
       const Pattern *pattern,         ///< points to a reflex::Pattern
       const Input&   input = Input(), ///< input character sequence for this matcher
-      const char    *opt = NULL)      ///< option string of the form `(A|N|T(=[[:digit:]])?|;)*`
+      const char    *opt = nullptr)      ///< option string of the form `(A|N|T(=[[:digit:]])?|;)*`
     :
       PatternMatcher<reflex::Pattern>(pattern, input, opt)
   {
@@ -71,7 +71,7 @@ class Matcher : public PatternMatcher<reflex::Pattern> {
   Matcher(
       const char   *pattern,         ///< a string regex for this matcher
       const Input&  input = Input(), ///< input character sequence for this matcher
-      const char   *opt = NULL)      ///< option string of the form `(A|N|T(=[[:digit:]])?|;)*`
+      const char   *opt = nullptr)      ///< option string of the form `(A|N|T(=[[:digit:]])?|;)*`
     :
       PatternMatcher<reflex::Pattern>(pattern, input, opt)
   {
@@ -81,7 +81,7 @@ class Matcher : public PatternMatcher<reflex::Pattern> {
   Matcher(
       const Pattern& pattern,         ///< a reflex::Pattern
       const Input&   input = Input(), ///< input character sequence for this matcher
-      const char    *opt = NULL)      ///< option string of the form `(A|N|T(=[[:digit:]])?|;)*`
+      const char    *opt = nullptr)      ///< option string of the form `(A|N|T(=[[:digit:]])?|;)*`
     :
       PatternMatcher<reflex::Pattern>(pattern, input, opt)
   {
@@ -91,7 +91,7 @@ class Matcher : public PatternMatcher<reflex::Pattern> {
   Matcher(
       const std::string& pattern,         ///< a reflex::Pattern or a string regex for this matcher
       const Input&       input = Input(), ///< input character sequence for this matcher
-      const char        *opt = NULL)      ///< option string of the form `(A|N|T(=[[:digit:]])?|;)*`
+      const char        *opt = nullptr)      ///< option string of the form `(A|N|T(=[[:digit:]])?|;)*`
     :
       PatternMatcher<reflex::Pattern>(pattern, input, opt)
   {
@@ -126,7 +126,7 @@ class Matcher : public PatternMatcher<reflex::Pattern> {
     return new Matcher(*this);
   }
   /// Reset this matcher's state to the initial state.
-  virtual void reset(const char *opt = NULL)
+  virtual void reset(const char *opt = nullptr)
   {
     DBGLOG("Matcher::reset()");
     PatternMatcher<reflex::Pattern>::reset(opt);
@@ -139,19 +139,19 @@ class Matcher : public PatternMatcher<reflex::Pattern> {
   {
     if (n == 0)
       return std::pair<const char*,size_t>(txt_, len_);
-    return std::pair<const char*,size_t>(NULL, 0);
+    return std::pair<const char*,size_t>(nullptr, 0);
   }
-  /// Returns the group capture identifier containing the group capture index >0 and name (or NULL) of a named group capture, or (1,NULL) by default
+  /// Returns the group capture identifier containing the group capture index >0 and name (or nullptr) of a named group capture, or (1,nullptr) by default
   virtual std::pair<size_t,const char*> group_id()
     /// @returns a pair of size_t and string
   {
-    return std::pair<size_t,const char*>(accept(), NULL);
+    return std::pair<size_t,const char*>(accept(), nullptr);
   }
-  /// Returns the next group capture identifier containing the group capture index >0 and name (or NULL) of a named group capture, or (0,NULL) when no more groups matched
+  /// Returns the next group capture identifier containing the group capture index >0 and name (or nullptr) of a named group capture, or (0,nullptr) when no more groups matched
   virtual std::pair<size_t,const char*> group_next_id()
-    /// @returns (0,NULL)
+    /// @returns (0,nullptr)
   {
-    return std::pair<size_t,const char*>(0, NULL);
+    return std::pair<size_t,const char*>(0, nullptr);
   }
   /// Returns the position of the last indent stop.
   size_t last_stop()
@@ -421,7 +421,7 @@ scan:
 find:
     int c1 = got_;
     bool bol = at_bol();
-    if (pat_->fsm_ != NULL)
+    if (pat_->fsm_ != nullptr)
       fsm_.c1 = c1;
 #if !defined(WITH_NO_INDENT)
 redo:
@@ -429,7 +429,7 @@ redo:
     lap_.resize(0);
     cap_ = 0;
     bool nul = method == Const::MATCH;
-    if (pat_->fsm_ != NULL)
+    if (pat_->fsm_ != nullptr)
     {
       DBGLOG("FSM code %p", pat_->fsm_);
       fsm_.bol = bol;
@@ -438,7 +438,7 @@ redo:
       nul = fsm_.nul;
       c1 = fsm_.c1;
     }
-    else if (pat_->opc_ != NULL)
+    else if (pat_->opc_ != nullptr)
     {
       const Pattern::Opcode *pc = pat_->opc_;
       while (true)

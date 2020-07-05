@@ -67,7 +67,7 @@ class FuzzyMatcher : public Matcher {
   FuzzyMatcher(
       const P     *pattern,         ///< points to a reflex::Pattern or a string regex for this matcher
       const Input& input = Input(), ///< input character sequence for this matcher
-      const char  *opt = NULL)      ///< option string of the form `(A|N|T(=[[:digit:]])?|;)*`
+      const char  *opt = nullptr)      ///< option string of the form `(A|N|T(=[[:digit:]])?|;)*`
     :
       Matcher(pattern, input, opt),
       max_(1),
@@ -84,7 +84,7 @@ class FuzzyMatcher : public Matcher {
       const P     *pattern,         ///< points to a reflex::Pattern or a string regex for this matcher
       uint16_t     max,             ///< max errors
       const Input& input = Input(), ///< input character sequence for this matcher
-      const char  *opt = NULL)      ///< option string of the form `(A|N|T(=[[:digit:]])?|;)*`
+      const char  *opt = nullptr)      ///< option string of the form `(A|N|T(=[[:digit:]])?|;)*`
     :
       Matcher(pattern, input, opt),
       max_(static_cast<uint8_t>(max)),
@@ -100,7 +100,7 @@ class FuzzyMatcher : public Matcher {
   FuzzyMatcher(
       const P&     pattern,         ///< a reflex::Pattern or a string regex for this matcher
       const Input& input = Input(), ///< input character sequence for this matcher
-      const char  *opt = NULL)      ///< option string of the form `(A|N|T(=[[:digit:]])?|;)*`
+      const char  *opt = nullptr)      ///< option string of the form `(A|N|T(=[[:digit:]])?|;)*`
     :
       Matcher(pattern, input, opt),
       max_(1),
@@ -117,7 +117,7 @@ class FuzzyMatcher : public Matcher {
       const P&     pattern,         ///< a reflex::Pattern or a string regex for this matcher
       uint16_t     max,             ///< max errors
       const Input& input = Input(), ///< input character sequence for this matcher
-      const char  *opt = NULL)      ///< option string of the form `(A|N|T(=[[:digit:]])?|;)*`
+      const char  *opt = nullptr)      ///< option string of the form `(A|N|T(=[[:digit:]])?|;)*`
     :
       Matcher(pattern, input, opt),
       max_(static_cast<uint8_t>(max)),
@@ -193,8 +193,8 @@ class FuzzyMatcher : public Matcher {
   struct BacktrackPoint {
     BacktrackPoint()
       :
-        pc0(NULL),
-        pc1(NULL),
+        pc0(nullptr),
+        pc1(nullptr),
         len(0),
         err(0),
         alt(true),
@@ -224,23 +224,23 @@ class FuzzyMatcher : public Matcher {
   const Pattern::Opcode *backtrack(BacktrackPoint& bpt, int& c1)
   {
     // no more alternatives
-    if (bpt.pc1 == NULL)
-      return NULL;
+    if (bpt.pc1 == nullptr)
+      return nullptr;
     // done when no more goto opcodes on characters remain
     if (!Pattern::is_opcode_goto(*bpt.pc1) || Pattern::is_meta(Pattern::lo_of(*bpt.pc1)))
-      return bpt.pc1 = NULL;
+      return bpt.pc1 = nullptr;
     Pattern::Index jump = Pattern::index_of(*bpt.pc1);
     // last opcode is a HALT?
     if (jump == Pattern::Const::HALT)
     {
       if (!Pattern::is_opcode_goto(*bpt.pc0) || (Pattern::lo_of(*bpt.pc0) & 0xC0) != 0xC0)
-        return bpt.pc1 = NULL;
+        return bpt.pc1 = nullptr;
       // loop over UTF-8 multibytes, checking linear case only (i.e. one wide char or a short range)
       for (int i = 0; i < 3; ++i)
       {
         jump = Pattern::index_of(*bpt.pc0);
         if (jump == Pattern::Const::HALT)
-          return bpt.pc1 = NULL;
+          return bpt.pc1 = nullptr;
         if (jump == Pattern::Const::LONG)
           jump = Pattern::long_index_of(bpt.pc0[1]);
         const Pattern::Opcode *pc0 = pat_->opc_ + jump;
@@ -315,7 +315,7 @@ redo:
     lap_.resize(0);
     cap_ = 0;
     bool nul = method == Const::MATCH;
-    if (pat_->opc_ != NULL)
+    if (pat_->opc_ != nullptr)
     {
       err_ = 0;
       uint8_t stack = 0;
@@ -701,15 +701,15 @@ unrolled:
               DBGLOG("point[%u] at %zu EOF", stack - 1, pc0 - pat_->opc_);
             }
           }
-          pc = NULL;
-          while (stack > 0 && pc == NULL)
+          pc = nullptr;
+          while (stack > 0 && pc == nullptr)
           {
             pc = backtrack(bpt_[stack - 1], c1);
-            if (pc == NULL)
+            if (pc == nullptr)
               --stack;
           }
           // exhausted all backtracking points?
-          if (pc == NULL)
+          if (pc == nullptr)
             break;
         }
         else
@@ -743,15 +743,15 @@ unrolled:
           else
           {
             // try insertion or substitution of pattern char
-            pc = NULL;
-            while (stack > 0 && pc == NULL)
+            pc = nullptr;
+            while (stack > 0 && pc == nullptr)
             {
               pc = backtrack(bpt_[stack - 1], c1);
-              if (pc == NULL)
+              if (pc == nullptr)
                 --stack;
             }
             // exhausted all backtracking points?
-            if (pc == NULL)
+            if (pc == nullptr)
               break;
           }
         }
@@ -764,7 +764,7 @@ unrolled:
       size_t loc = txt_ - buf_ + 1;
       const char *s = buf_ + loc;
       const char *e = static_cast<const char*>(std::memchr(s, '\n', cur_ - loc));
-      if (e == NULL)
+      if (e == nullptr)
         e = buf_ + cur_;
       if (pat_->len_ == 0)
       {
@@ -795,7 +795,7 @@ unrolled:
       else if (s < e)
       {
         s = static_cast<const char*>(std::memchr(s, *pat_->pre_, e - s));
-        if (s != NULL)
+        if (s != nullptr)
         {
           loc = s - buf_;
           sst.use = true;
@@ -951,7 +951,7 @@ unrolled:
               const char *s = buf_ + loc;
               const char *e = buf_ + end_;
               s = static_cast<const char*>(std::memchr(s, *pat_->pre_, e - s));
-              if (s != NULL)
+              if (s != nullptr)
               {
                 loc = s - buf_;
                 set_current(loc);

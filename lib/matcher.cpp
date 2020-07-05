@@ -355,7 +355,7 @@ bool Matcher::advance()
       const char *s = buf_ + loc;
       const char *e = buf_ + end_;
       s = static_cast<const char*>(std::memchr(s, *pre, e - s));
-      if (s != NULL)
+      if (s != nullptr)
       {
         loc = s - buf_;
         set_current(loc);
@@ -672,8 +672,8 @@ bool Matcher::advance()
       {
         do
           s = static_cast<const char*>(std::memchr(s, pre[lcp_], e - s));
-        while (s != NULL && s[lcs_ - lcp_] != pre[lcs_] && ++s < e);
-        if (s == NULL || s >= e)
+        while (s != nullptr && s[lcs_ - lcp_] != pre[lcs_] && ++s < e);
+        if (s == nullptr || s >= e)
         {
           s = e;
           break;

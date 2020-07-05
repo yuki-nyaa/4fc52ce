@@ -86,7 +86,7 @@ static std::string posix_class(const char *s, int esc)
 {
   std::string regex;
   const int *wc = Posix::range(s + (s[0] == '^'));
-  if (wc != NULL)
+  if (wc != nullptr)
   {
     regex.assign("[");
     if (s[0] == '^')
@@ -102,7 +102,7 @@ static std::string unicode_class(const char *s, int esc, convert_flag_type flags
 {
   std::string regex;
   const int *wc = Unicode::range(s + (s[0] == '^'));
-  if (wc != NULL)
+  if (wc != nullptr)
   {
     if (s[0] == '^')
     {
@@ -206,7 +206,7 @@ inline bool is_modified(const std::map<size_t,std::string>& mod, int c)
 inline bool supports_modifier(const char *signature, int c)
 {
   const char *escapes = std::strchr(signature, ':');
-  if (escapes == NULL)
+  if (escapes == nullptr)
     return false;
   const char *s = std::strchr(signature, c);
   return s && s < escapes;
@@ -217,7 +217,7 @@ inline bool supports_escape(const char *signature, int escape)
   if (!signature)
     return false;
   const char *escapes = std::strchr(signature, ':');
-  return std::strchr(escapes != NULL ? escapes : signature, escape) != NULL;
+  return std::strchr(escapes != nullptr ? escapes : signature, escape) != nullptr;
 }
 
 inline int hex_or_octal_escape(const char *signature)
@@ -238,20 +238,20 @@ inline int hex_or_octal_escape(const char *signature)
 static void convert_escape_char(const char *pattern, size_t& loc, size_t& pos, convert_flag_type flags, const char *signature, const std::map<size_t,std::string>& mod, const char *par, std::string& regex)
 {
   int c = pattern[pos];
-  if (std::strchr(regex_unescapes, c) != NULL)
+  if (std::strchr(regex_unescapes, c) != nullptr)
   {
     // translate \x to x
     regex.append(&pattern[loc], pos - loc - 1);
     loc = pos;
   }
-  else if (std::strchr(regex_escapes, c) != NULL)
+  else if (std::strchr(regex_escapes, c) != nullptr)
   {
     // translate \x to \xXX
     int esc = hex_or_octal_escape(signature);
     regex.append(&pattern[loc], pos - loc - 1).append(latin1(c, c, esc));
     loc = pos + 1;
   }
-  else if (std::strchr(regex_meta, c) == NULL)
+  else if (std::strchr(regex_meta, c) == nullptr)
   {
     char buf[3] = { '^', static_cast<char>(lowercase(c)), '\0' };
     bool invert = std::isupper(c) != 0;
@@ -351,7 +351,7 @@ static void convert_escape_char(const char *pattern, size_t& loc, size_t& pos, c
         if (std::strchr(regex_anchors, c))
           throw regex_error(regex_error::invalid_anchor, pattern, pos);
         const char *s = std::strchr(regex_abtnvfr, c);
-        if (s == NULL)
+        if (s == nullptr)
           throw regex_error(regex_error::invalid_escape, pattern, pos);
         int wc = static_cast<int>(s - regex_abtnvfr + '\a');
         regex.append(&pattern[loc], pos - loc - 1).append(latin1(wc, wc, esc));
@@ -737,12 +737,12 @@ static void insert_escape_class(const char *pattern, size_t& pos, const std::map
 {
   int c = pattern[pos];
   char name[2] = { static_cast<char>(lowercase(c)), '\0' };
-  const int *translated = NULL;
+  const int *translated = nullptr;
   if (is_modified(mod, 'u'))
     translated = Unicode::range(name);
   else
     translated = Posix::range(name);
-  if (translated == NULL)
+  if (translated == nullptr)
     throw regex_error(regex_error::invalid_class, pattern, pos);
   if (std::islower(c))
   {
@@ -861,15 +861,15 @@ static int insert_escape(const char *pattern, size_t len, size_t& pos, convert_f
     {
       name.push_back(pattern[k]);
     }
-    const int *translated = NULL;
+    const int *translated = nullptr;
     const char *s = name.c_str();
     if (s[0] == '^')
       ++s;
     if (is_modified(mod, 'u'))
       translated = Unicode::range(s);
-    else if (translated == NULL)
+    else if (translated == nullptr)
       translated = Posix::range(s);
-    if (translated == NULL)
+    if (translated == nullptr)
       throw regex_error(regex_error::invalid_class, pattern, pos);
     if (c == 'P' || name.at(0) == '^')
     {
@@ -923,7 +923,7 @@ static int insert_escape(const char *pattern, size_t len, size_t& pos, convert_f
   else if (std::isalpha(c))
   {
     const char *s = std::strchr(regex_abtnvfr, c);
-    if (s == NULL)
+    if (s == nullptr)
     {
       insert_escape_class(pattern, pos, mod, ranges);
       return -1;
@@ -952,7 +952,7 @@ static void insert_posix_class(const char *pattern, size_t len, size_t& pos, ORa
       name = const_cast<char*>("ASCII");
   }
   const int *translated = Posix::range(name);
-  if (translated == NULL)
+  if (translated == nullptr)
     throw regex_error(regex_error::invalid_class, pattern, pos);
   if (*buf == '^')
   {
@@ -983,7 +983,7 @@ static void merge_list(const char *pattern, size_t len, size_t& pos, convert_fla
     ++pos;
     insert_list(pattern, len, pos, flags, mod, ranges, macros);
   }
-  else if (pattern[pos] == '{' && macros != NULL)
+  else if (pattern[pos] == '{' && macros != nullptr)
   {
     ++pos;
     const std::string& list = expand(macros, pattern, len, pos);
@@ -1009,7 +1009,7 @@ static void intersect_list(const char *pattern, size_t len, size_t& pos, convert
     insert_list(pattern, len, pos, flags, mod, intersect, macros);
     ranges &= intersect;
   }
-  else if (pattern[pos] == '{' && macros != NULL)
+  else if (pattern[pos] == '{' && macros != nullptr)
   {
     ++pos;
     const std::string& list = expand(macros, pattern, len, pos);
@@ -1036,7 +1036,7 @@ static void subtract_list(const char *pattern, size_t len, size_t& pos, convert_
     insert_list(pattern, len, pos, flags, mod, subtract, macros);
     ranges -= subtract;
   }
-  else if (pattern[pos] == '{' && macros != NULL)
+  else if (pattern[pos] == '{' && macros != nullptr)
   {
     ++pos;
     const std::string& list = expand(macros, pattern, len, pos);
@@ -1135,7 +1135,7 @@ static void insert_list(const char *pattern, size_t len, size_t& pos, convert_fl
       insert_posix_class(pattern, len, pos, ranges);
       pc = -1;
     }
-    else if (c == '|' && pattern[pos + 1] == '|' && pos + 3 < len && (pattern[pos + 2] == '[' || (pattern[pos + 2] == '{' && macros != NULL)))
+    else if (c == '|' && pattern[pos + 1] == '|' && pos + 3 < len && (pattern[pos + 2] == '[' || (pattern[pos + 2] == '{' && macros != nullptr)))
     {
       // character class union [abc||[def]]
       if (range)
@@ -1144,7 +1144,7 @@ static void insert_list(const char *pattern, size_t len, size_t& pos, convert_fl
       merge_list(pattern, len, pos, flags, mod, ranges, macros);
       pc = -1;
     }
-    else if (c == '&' && pattern[pos + 1] == '&' && pos + 3 < len && (pattern[pos + 2] == '[' || (pattern[pos + 2] == '{' && macros != NULL)))
+    else if (c == '&' && pattern[pos + 1] == '&' && pos + 3 < len && (pattern[pos + 2] == '[' || (pattern[pos + 2] == '{' && macros != nullptr)))
     {
       // character class intersection [a-z&&[^aeiou]]
       if (range)
@@ -1153,7 +1153,7 @@ static void insert_list(const char *pattern, size_t len, size_t& pos, convert_fl
       intersect_list(pattern, len, pos, flags, mod, ranges, macros);
       pc = -1;
     }
-    else if (c == '-' && pattern[pos + 1] == '-' && pos + 3 < len && (pattern[pos + 2] == '[' || (pattern[pos + 2] == '{' && macros != NULL)))
+    else if (c == '-' && pattern[pos + 1] == '-' && pos + 3 < len && (pattern[pos + 2] == '[' || (pattern[pos + 2] == '{' && macros != nullptr)))
     {
       // character class subtraction [a-z--[aeiou]]
       if (range)
@@ -1280,7 +1280,7 @@ std::string convert(const char *pattern, const char *signature, convert_flag_typ
   size_t lev = 1;
   size_t lap = 0;
   size_t len = std::strlen(pattern);
-  bool can = std::strchr(signature, ':') != NULL;
+  bool can = std::strchr(signature, ':') != nullptr;
   const char *par = can ? "(?:" : "(";
   std::map<size_t,std::string> mod;
   if ((flags & convert_flag::anycase))
@@ -1377,7 +1377,7 @@ std::string convert(const char *pattern, const char *signature, convert_flag_typ
             size_t k = loc = ++pos;
             while (pos + 1 < len && (pattern[pos] != '\\' || pattern[pos + 1] != 'E'))
             {
-              if (std::strchr(regex_meta, pattern[pos]) != NULL)
+              if (std::strchr(regex_meta, pattern[pos]) != nullptr)
               {
                 regex.append(&pattern[loc], pos - loc).push_back('\\');
                 loc = pos;
@@ -1439,7 +1439,7 @@ std::string convert(const char *pattern, const char *signature, convert_flag_typ
         else
         {
           convert_escape(pattern, len, loc, pos, flags, signature, mod, par, regex);
-          anc = (std::strchr(regex_anchors, c) != NULL);
+          anc = (std::strchr(regex_anchors, c) != nullptr);
           beg = false;
         }
         break;
@@ -1713,7 +1713,7 @@ std::string convert(const char *pattern, const char *signature, convert_flag_typ
                 regex.append(&pattern[loc], pos - loc);
                 loc = ++pos;
               }
-              else if (std::strchr(regex_meta, pattern[pos]) != NULL)
+              else if (std::strchr(regex_meta, pattern[pos]) != nullptr)
               {
                 regex.append(&pattern[loc], pos - loc).push_back('\\');
                 loc = pos;
@@ -1771,7 +1771,7 @@ std::string convert(const char *pattern, const char *signature, convert_flag_typ
         }
         else
         {
-          if (macros != NULL && pos + 1 < len && (std::isalpha(pattern[pos + 1]) || pattern[pos + 1] == '_' || pattern[pos + 1] == '$' || (pattern[pos + 1] & 0x80) == 0x80))
+          if (macros != nullptr && pos + 1 < len && (std::isalpha(pattern[pos + 1]) || pattern[pos + 1] == '_' || pattern[pos + 1] == '$' || (pattern[pos + 1] & 0x80) == 0x80))
           {
             // if macros are provided: lookup {name} and expand without converting
             regex.append(&pattern[loc], pos - loc);

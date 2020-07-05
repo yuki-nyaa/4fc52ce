@@ -80,14 +80,14 @@ typedef timeval timer_type;
 /// Start timer.
 inline void timer_start(timer_type& t) ///< timer to be initialized
 {
-  gettimeofday(&t, NULL);
+  gettimeofday(&t, nullptr);
 }
 
 /// Return elapsed time in milliseconds (ms) with microsecond precision since the last call up to 1 minute (wraps if elapsed time exceeds 1 minute!)
 inline float timer_elapsed(timer_type& t) ///< timer to be updated
 {
   timer_type now;
-  gettimeofday(&now, NULL);
+  gettimeofday(&now, nullptr);
   float sec = now.tv_usec;
   sec -= t.tv_usec;
   t.tv_usec = now.tv_usec;

@@ -152,7 +152,7 @@ int yywrap(void);
 /// Flex-compatible macro: the current start condition.
 #define yy_current_state        YY_SCANNER_DOT_ start()
 
-/// Flex-compatible macro: the current matcher buffer, NULL when scanner has not started.
+/// Flex-compatible macro: the current matcher buffer, nullptr when scanner has not started.
 #define YY_CURRENT_BUFFER       YY_SCANNER_DOT_ ptr_matcher()
 
 /// Flex-compatible macro: the buffer flush action
@@ -179,7 +179,7 @@ int yywrap(void);
 /// Flex-compatible macro: the current input, a reference to a reflex::Input object that can be a stream, file, or string.
 #define yyin                    YY_SCANNER_DOT_ in()
 
-/// Flex-compatible macro: the current output stream, points to std::ostream or NULL.
+/// Flex-compatible macro: the current output stream, points to std::ostream or nullptr.
 #define yyout                   YY_SCANNER_DOT_ os()
 
 /// Flex-compatible macro: at-begin-of-line check (use only when scanner has started).
@@ -249,15 +249,15 @@ int yywrap(void);
 
 /// Flex-compatible macro: scan a string
 #if defined(REFLEX_OPTION_reentrant)
-#define yy_scan_string(i,s)     (static_cast<FlexLexer*>(s)->in(i), static_cast<YY_BUFFER_STATE>(NULL))
+#define yy_scan_string(i,s)     (static_cast<FlexLexer*>(s)->in(i), static_cast<YY_BUFFER_STATE>(nullptr))
 #define yy_scan_wstring(i,s)    yy_scan_string((i), (s))
 #define yy_scan_bytes(b,n,s)    yy_scan_string(reflex::Input((b), static_cast<size_t>(n)), (s))
-#define yy_scan_buffer(b,n,s)   (static_cast<FlexLexer*>(s)->buffer((b), (n)-1), static_cast<YY_BUFFER_STATE>(NULL))
+#define yy_scan_buffer(b,n,s)   (static_cast<FlexLexer*>(s)->buffer((b), (n)-1), static_cast<YY_BUFFER_STATE>(nullptr))
 #else
-#define yy_scan_string(i)       (YY_SCANNER_DOT_ in(i), static_cast<YY_BUFFER_STATE>(NULL))
+#define yy_scan_string(i)       (YY_SCANNER_DOT_ in(i), static_cast<YY_BUFFER_STATE>(nullptr))
 #define yy_scan_wstring(i)      yy_scan_string(i)
 #define yy_scan_bytes(b,n)      yy_scan_string(reflex::Input((b), static_cast<size_t>(n)))
-#define yy_scan_buffer(b,n)     (YY_SCANNER_DOT_ buffer((b), (n)-1), static_cast<YY_BUFFER_STATE>(NULL))
+#define yy_scan_buffer(b,n)     (YY_SCANNER_DOT_ buffer((b), (n)-1), static_cast<YY_BUFFER_STATE>(nullptr))
 #endif
 
 /// Flex-compatible macro: the terminating action.
@@ -415,7 +415,7 @@ class FlexLexer : public AbstractLexer<M> {
         const typename M::Pattern& pattern, ///< regex pattern to instantiate matcher class M(pattern, input)
         const Input&               input,   ///< the reflex::Input to instantiate matcher class M(pattern, input)
         FlexLexer                 *lexer,   ///< points to the instantiating lexer class
-        const char                *opt = NULL) ///< option string of the form `(A|N|T(=[[:digit:]])?|;)*`
+        const char                *opt = nullptr) ///< option string of the form `(A|N|T(=[[:digit:]])?|;)*`
       :
         AbstractBaseLexer::Matcher(pattern, input, lexer, opt)
     { }
@@ -424,7 +424,7 @@ class FlexLexer : public AbstractLexer<M> {
         const char    *pattern,    ///< regex pattern to instantiate matcher class M(pattern, input)
         const Input&   input,      ///< the reflex::Input to instantiate matcher class M(pattern, input)
         FlexLexer     *lexer,      ///< points to the instantiating lexer class
-        const char    *opt = NULL) ///< option string of the form `(A|N|T(=[[:digit:]])?|;)*`
+        const char    *opt = nullptr) ///< option string of the form `(A|N|T(=[[:digit:]])?|;)*`
       :
         AbstractBaseLexer::Matcher(pattern, input, lexer, opt)
     { }
@@ -503,7 +503,7 @@ class FlexLexer : public AbstractLexer<M> {
   /// Switch input and output streams.
   virtual void switch_streams(
       const Input&  input = Input(), ///< new input to read from
-      std::ostream *os    = NULL)    ///< echo the text matches to this std::ostream or std::cout by default
+      std::ostream *os    = nullptr)    ///< echo the text matches to this std::ostream or std::cout by default
   {
     if (input.assigned())
       this->in(input);

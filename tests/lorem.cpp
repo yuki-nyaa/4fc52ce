@@ -29,7 +29,7 @@ void banner(const char *title)
   printf("/\n\n");
 }
 
-void timer(const char *text = NULL)
+void timer(const char *text = nullptr)
 {
   static timer_type t;
   if (text)

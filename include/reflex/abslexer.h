@@ -56,7 +56,7 @@ class AbstractLexer {
         const typename M::Pattern& pattern,    ///< regex pattern to instantiate matcher class M(pattern, input)
         const Input&               input,      ///< the reflex::Input to instantiate matcher class M(pattern, input)
         AbstractLexer             *lexer,      ///< points to the instantiating lexer class
-        const char                *opt = NULL) ///< option string of the form `(A|N|T(=[[:digit:]])?|;)*`
+        const char                *opt = nullptr) ///< option string of the form `(A|N|T(=[[:digit:]])?|;)*`
       :
         M(pattern, input, opt),
         lexer_(lexer)
@@ -66,7 +66,7 @@ class AbstractLexer {
         const char    *pattern,    ///< regex pattern to instantiate matcher class M(pattern, input)
         const Input&   input,      ///< the reflex::Input to instantiate matcher class M(pattern, input)
         AbstractLexer *lexer,      ///< points to the instantiating lexer class
-        const char    *opt = NULL) ///< option string of the form `(A|N|T(=[[:digit:]])?|;)*`
+        const char    *opt = nullptr) ///< option string of the form `(A|N|T(=[[:digit:]])?|;)*`
       :
         M(pattern, input, opt),
         lexer_(lexer)
@@ -88,9 +88,9 @@ class AbstractLexer {
     :
       in_(input),
       os_(&os),
-      base_(NULL),
+      base_(nullptr),
       size_(0),
-      matcher_(NULL),
+      matcher_(nullptr),
       start_(0),
       debug_(0),
       stack_(),
@@ -153,7 +153,7 @@ class AbstractLexer {
   inline Input& stdinit()
     /// @returns reference to the current reflex::Input object with input assigned
   {
-    if (!in_.assigned() && base_ == NULL)
+    if (!in_.assigned() && base_ == nullptr)
       in_ = stdin;
     return in_;
   }
@@ -161,7 +161,7 @@ class AbstractLexer {
   inline Input& nostdinit()
     /// @returns reference to the current reflex::Input object with input assigned
   {
-    if (!in_.assigned() && base_ == NULL)
+    if (!in_.assigned() && base_ == nullptr)
       in_ = std::cin;
     return in_;
   }
@@ -205,17 +205,17 @@ class AbstractLexer {
   inline bool has_matcher() const
     /// @returns true if a matcher was assigned
   {
-    return matcher_ != NULL;
+    return matcher_ != nullptr;
   }
   /// Set the matcher (and its current state) for scanning.
   inline AbstractLexer& matcher(Matcher *matcher) ///< points to a matcher object
     /// @returns reference to *this
   {
     matcher_ = matcher;
-    if (matcher_ != NULL && base_ != NULL)
+    if (matcher_ != nullptr && base_ != nullptr)
     {
       matcher_->buffer(base_, size_);
-      base_ = NULL;
+      base_ = nullptr;
       size_ = 0;
     }
     return *this;
@@ -227,16 +227,16 @@ class AbstractLexer {
     ASSERT(has_matcher());
     return *matcher_;
   }
-  /// Returns a pointer to the current matcher, NULL if none was set.
+  /// Returns a pointer to the current matcher, nullptr if none was set.
   inline Matcher *ptr_matcher() const
-    /// @returns pointer to the current matcher or NULL if no matcher was set
+    /// @returns pointer to the current matcher or nullptr if no matcher was set
   {
     return matcher_;
   }
   /// Returns a new matcher for the given input.
   virtual Matcher *new_matcher(
       const Input& input = Input(), ///< reflex::Input character sequence to match
-      const char *opt    = NULL)    ///< options, if any
+      const char *opt    = nullptr)    ///< options, if any
     /// @returns pointer to new reflex::AbstractLexer::Matcher
   {
     char tabs[4] = "T=n";
@@ -245,10 +245,10 @@ class AbstractLexer {
   /// Delete a matcher.
   void del_matcher(Matcher *matcher)
   {
-    if (matcher != NULL)
+    if (matcher != nullptr)
       delete matcher;
     if (matcher_ == matcher)
-      matcher_ = NULL;
+      matcher_ = nullptr;
   }
   /// Push the current matcher on the stack and use the given matcher for scanning.
   void push_matcher(Matcher *matcher) ///< points to a matcher object
@@ -267,7 +267,7 @@ class AbstractLexer {
       stack_.pop();
       return true;
     }
-    matcher_ = NULL;
+    matcher_ = nullptr;
     return false;
   }
   /// Echo the matched text to the current output.
@@ -404,16 +404,16 @@ class AbstractLexer {
     return state_.empty();
   }
   /// Lexer exceptions.
-  virtual void lexer_error(const char *message = NULL)
+  virtual void lexer_error(const char *message = nullptr)
   {
     std::stringstream stream_message;
-    stream_message << (message != NULL ? message : "lexer error") << " at " << lineno() << ":" << columno();
+    stream_message << (message != nullptr ? message : "lexer error") << " at " << lineno() << ":" << columno();
     throw std::runtime_error(stream_message.str());
   }
  protected:
   Input                in_;      ///< the input character sequence to scan
   std::ostream        *os_;      ///< the output stream to echo text matches to
-  char                *base_;    ///< the buffer to scan in place, if non-NULL
+  char                *base_;    ///< the buffer to scan in place, if non-nullptr
   size_t               size_;    ///< the size of the buffer to scan in place, if nonzero
   Matcher             *matcher_; ///< the matcher used for scanning
   int                  start_;   ///< the current start condition state

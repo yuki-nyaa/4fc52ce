@@ -139,7 +139,7 @@ static const char *options_table[] = {
   "YYSTYPE",
   "7bit",
   "8bit",
-  NULL // end of table
+  nullptr // end of table
 };
 
 /// @brief Table with regex library properties.
@@ -260,7 +260,7 @@ static const Reflex::Library library_table[] = {
     "/* EXPERIMENTAL OPTION, NOT RECOMMENDED */ reflex::StdEcmaMatcher",
     "!=:bcdfnrstvwxBDSW?"
   },
-  { NULL, NULL, NULL, NULL, NULL } // end of table
+  { nullptr, nullptr, nullptr, nullptr, nullptr } // end of table
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -329,9 +329,9 @@ void Reflex::init(int argc, char **argv)
   const char *term = getenv("TERM");
   color_term = term && (strstr(term, "ansi") || strstr(term, "xterm") || strstr(term, "color"));
 #endif
-  for (const char *const *i = options_table; *i != NULL; ++i)
+  for (const char *const *i = options_table; *i != nullptr; ++i)
     options[*i] = "";
-  for (const Library *j = library_table; j->name != NULL; ++j)
+  for (const Library *j = library_table; j->name != nullptr; ++j)
     libraries[j->name] = *j;
   library = &libraries["reflex"];
   conditions.push_back("INITIAL");
@@ -371,7 +371,7 @@ void Reflex::init(int argc, char **argv)
             {
               const char *val = strchr(arg, '=');
               size_t len = strlen(arg);
-              if (val != NULL)
+              if (val != nullptr)
                 len = val - arg;
               std::string name(arg, len);
               size_t pos;
@@ -380,7 +380,7 @@ void Reflex::init(int argc, char **argv)
               StringMap::iterator i = options.find(name);
               if (i == options.end())
                 help("unknown option --", arg);
-              if (val != NULL)
+              if (val != nullptr)
                 i->second = val + 1;
               else
                 i->second = "true";
@@ -533,7 +533,7 @@ void Reflex::help(const char *message, const char *arg)
     std::cout
       << "reflex: "
       << message
-      << (arg != NULL ? arg : "")
+      << (arg != nullptr ? arg : "")
       << std::endl;
   std::cout << "Usage: reflex [OPTIONS] [FILE]\n\
 \n\
@@ -713,7 +713,7 @@ void Reflex::parse()
   if (!infile.empty())
   {
     fopen_s(&file, infile.c_str(), "r");
-    if (file == NULL)
+    if (file == nullptr)
       abort("cannot open file ", infile.c_str());
   }
   in = file;
@@ -727,9 +727,9 @@ void Reflex::parse()
 /// Parse the specified %%include file
 void Reflex::include(const std::string& filename)
 {
-  FILE *file = NULL;
+  FILE *file = nullptr;
   fopen_s(&file, filename.c_str(), "r");
-  if (file == NULL)
+  if (file == nullptr)
     abort("cannot include file ", filename.c_str());
   std::string save_infile(infile);
   infile = filename;
@@ -822,7 +822,7 @@ bool Reflex::is(const char *s)
 /// Match s then look for a '{' at the end of the line (skipping whitespace) and return true, false otherwise (pos is unchanged)
 bool Reflex::br(size_t pos, const char *s)
 {
-  if (s != NULL)
+  if (s != nullptr)
   {
     if (pos >= linelen || *s == '\0' || lower(line.at(pos)) != *s++)
       return false;
@@ -1067,9 +1067,9 @@ bool Reflex::get_pattern(size_t& pos, std::string& pattern, std::string& regex)
         // line ends in \ and continues on the next line
         pattern.append(line.substr(loc, pos - loc));
         if (!get_line())
-          error("EOF encountered inside a pattern", NULL, at_lineno);
+          error("EOF encountered inside a pattern", nullptr, at_lineno);
         if (is("%%"))
-          error("%% section ending encountered inside a pattern", NULL, at_lineno);
+          error("%% section ending encountered inside a pattern", nullptr, at_lineno);
         pos = 0;
         (void)ws(pos); // skip indent, if any
         loc = pos;
@@ -1143,16 +1143,16 @@ std::string Reflex::get_code(size_t& pos)
     while (pos >= linelen)
     {
       if (!get_line())
-        error("EOF encountered inside an action", NULL, at_lineno);
+        error("EOF encountered inside an action", nullptr, at_lineno);
       pos = 0;
       if (tok == CODE)
       {
         if (is("%%"))
         {
           if (lev > 0 || (!is_usercode && blk > 0))
-            error("%% section ending encountered inside an action where } is expected", NULL, at_lineno);
+            error("%% section ending encountered inside an action where } is expected", nullptr, at_lineno);
           else if (blk > 0)
-            error("%% section ending encountered inside an action where %} is expected", NULL, at_lineno);
+            error("%% section ending encountered inside an action where %} is expected", nullptr, at_lineno);
         }
         if (is("%{"))
         {
@@ -1332,7 +1332,7 @@ void Reflex::abort(const char *message, const char *arg)
     SGR("\033[0m") << "reflex: " <<
     SGR("\033[1;31m") << "error: " << SGR("\033[0m") <<
     message <<
-    SGR("\033[1m") << (arg != NULL ? arg : "") << SGR("\033[0m") <<
+    SGR("\033[1m") << (arg != nullptr ? arg : "") << SGR("\033[0m") <<
     std::endl;
   exit(EXIT_FAILURE);
 }
@@ -1344,7 +1344,7 @@ void Reflex::error(const char *message, const char *arg, size_t at_lineno)
     SGR("\033[0m") << (infile.empty() ? "(stdin)" : infile.c_str()) << ":" << (at_lineno ? at_lineno : lineno) << ": " <<
     SGR("\033[1;31m") << "error: " << SGR("\033[0m") <<
     message <<
-    SGR("\033[1m") << (arg != NULL ? arg : "") << SGR("\033[0m") <<
+    SGR("\033[1m") << (arg != nullptr ? arg : "") << SGR("\033[0m") <<
     std::endl;
   exit(EXIT_FAILURE);
 }
@@ -1357,7 +1357,7 @@ void Reflex::warning(const char *message, const char *arg, size_t at_lineno)
       SGR("\033[0m") << (infile.empty() ? "(stdin)" : infile.c_str()) << ":" << (at_lineno ? at_lineno : lineno) << ": " <<
       SGR("\033[1;35m") << "warning: " << SGR("\033[0m") <<
       message <<
-      SGR("\033[1m") << (arg != NULL ? arg : "") << SGR("\033[0m") <<
+      SGR("\033[1m") << (arg != nullptr ? arg : "") << SGR("\033[0m") <<
       std::endl;
 }
 
@@ -1786,7 +1786,7 @@ void Reflex::write()
           out = &ofs;
         }
       }
-      write_regex(NULL, patterns[start]);
+      write_regex(nullptr, patterns[start]);
       *out << std::endl;
       if (!ofs.good())
         abort("error in writing");
@@ -2049,7 +2049,7 @@ void Reflex::write_class()
       *out << "      " << options["ctorarg"] << ",\n";
     *out <<
       "      const reflex::Input& input = reflex::Input(),\n"
-      "      std::ostream        *os    = NULL)\n"
+      "      std::ostream        *os    = nullptr)\n"
       "    :\n"
       "      " << base << "(input, os)\n";
     write_section_init();
@@ -2248,7 +2248,7 @@ void Reflex::write_class()
     *out <<
       "  " << token_type << " " << lex << "(\n"
       "      const reflex::Input& input,\n"
-      "      std::ostream        *os = NULL)\n"
+      "      std::ostream        *os = nullptr)\n"
       "  {\n"
       "    in(input);\n"
       "    if (os)\n"
@@ -2303,7 +2303,7 @@ void Reflex::write_perf_report()
     *out <<
       "  void perf_report()\n"
       "  {\n"
-      "    if (perf_report_time_pointer != NULL)\n"
+      "    if (perf_report_time_pointer != nullptr)\n"
       "      *perf_report_time_pointer += reflex::timer_elapsed(perf_report_timer);\n"
       "    std::cerr << \"reflex " REFLEX_VERSION " " << escape_bs(infile) << " performance report:\\n\";\n";
     for (Start start = 0; start < conditions.size(); ++start)
@@ -2352,7 +2352,7 @@ void Reflex::write_perf_report()
           "    perf_report_" << conditions[start] << "_default = 0;\n";
     }
     *out <<
-      "    perf_report_time_pointer = NULL;\n"
+      "    perf_report_time_pointer = nullptr;\n"
       "    reflex::timer_start(perf_report_timer);\n"
       "  }\n"
       " protected:\n";
@@ -2739,7 +2739,7 @@ void Reflex::write_lexer()
     "  {\n";
   if (!options["perf_report"].empty())
     *out <<
-      "    if (perf_report_time_pointer != NULL)\n"
+      "    if (perf_report_time_pointer != nullptr)\n"
       "      *perf_report_time_pointer += reflex::timer_elapsed(perf_report_timer);\n";
   if (conditions.size() > 1)
     *out <<
@@ -2974,7 +2974,7 @@ void Reflex::write_main()
 /// Write regex string to lex.yy.cpp by escaping \ and ", prevent trigraphs, very long strings are represented by character arrays
 void Reflex::write_regex(const std::string *condition, const std::string& regex)
 {
-  // output a string if start condition == NULL (--regexp-file option) or when the string is not too long
+  // output a string if start condition == nullptr (--regexp-file option) or when the string is not too long
   if (!condition ||
 #ifdef OS_WIN
       regex.size() <= 16384

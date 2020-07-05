@@ -56,7 +56,7 @@ message. The log entry is added to a log file or sent to `stderr` as specified:
 `DBGCHK(condition)` calls `assert(condition)` when compiled in DEBUG mode.
 
 The utility macro `DBGSTR(const char *s)` returns string `s` or `"(null)"` when
-`s == NULL`.
+`s == nullptr`.
 
 @note to temporarily enable debugging a specific block of code without globally
 debugging all code, use a leading underscore, e.g. `_DBGLOG(format, ...)`.
@@ -75,7 +75,7 @@ Example
     {
       FILE *fd;
       DBGLOG("Program start");
-      if ((fd = fopen("foo.bar", "r")) == NULL)
+      if ((fd = fopen("foo.bar", "r")) == nullptr)
       {
         DBGLOG("Error %d: %s ", errno, DBGSTR(strerror(errno)));
         for (int i = 1; i < argc; ++i)
@@ -83,7 +83,7 @@ Example
       }
       else
       {
-        DBGCHK(fd != NULL);
+        DBGCHK(fd != nullptr);
         // OK, so go ahead to read foo.bar ...
         // ...
         fclose(fd);
@@ -146,7 +146,7 @@ extern "C" void REFLEX_DBGOUT_(const char *log, const char *file, int line);
 #else
 # define DBGFILE DBGXIFY(DEBUG) ".log"
 #endif
-#define DBGSTR(S) (S?S:"(NULL)")
+#define DBGSTR(S) (S?S:"(nullptr)")
 #define _DBGLOG(...) \
 ( REFLEX_DBGOUT_(DBGFILE, __FILE__, __LINE__), ::fprintf(REFLEX_DBGFD_, "" __VA_ARGS__), ::fflush(REFLEX_DBGFD_))
 #define _DBGLOGN(...) \

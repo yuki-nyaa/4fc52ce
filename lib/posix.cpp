@@ -80,7 +80,7 @@ const int * range(const char *s)
   Tables::Range::const_iterator i = tables.range.find(s);
   if (i != tables.range.end())
     return i->second;
-  return NULL;
+  return nullptr;
 }
 
 }
