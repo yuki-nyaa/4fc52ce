@@ -41,6 +41,9 @@ a.out
 *.dSYM
 .*.swp
 .*.swa
+
+# Vscode files
+.vscode
 *.code-workspace
 
 # Autotools
