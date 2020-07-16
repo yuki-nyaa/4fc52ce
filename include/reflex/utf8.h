@@ -39,6 +39,7 @@
 
 #include <cstring>
 #include <string>
+#include<cuchar>
 
 #if defined(WITH_STANDARD_REPLACEMENT_CHARACTER)
 /// Replace invalid UTF-8 with the standard replacement character U+FFFD.  This is not the default in RE/flex.
@@ -262,6 +263,55 @@ inline std::wstring wcs(const std::string& s) ///< string with UTF-8 to convert
   /// @returns wide string
 {
   return wcs(s.c_str(), s.size());
+}
+
+/// New API to convert to UTF-8 from UTF-32
+inline size_t toutf8(
+    char32_t c, ///< UCS-4 character U+0000 to U+10ffff
+    char *s) ///< points to the buffer to populate with UTF-8 (1 to 6 bytes) not NUL-terminated
+  /// @returns length (in bytes) of UTF-8 character sequence stored in s
+{
+  std::mbstate_t state{};
+  return c32rtomb(s, c, &state);
+}
+
+/// New API to convert from UTF-8 to UTF-32
+inline char32_t fromutf8(
+    const char *s,         ///< points to the buffer with UTF-8 (1 to 6 bytes)
+    const char **r = nullptr) ///< points to pointer to set to the new position in s after the UTF-8 sequence, optional
+  /// @returns UCS character
+{
+  char32_t c32;
+  std::mbstate_t state{};
+  std::size_t rc = std::mbrtoc32(&c32, s, 6, &state);
+  *r=s+rc;
+  return c32;
+}
+
+/// Convert UTF-8 string to u32string.
+inline std::u32string u32cs(
+    const char *s, ///< string with UTF-8 to convert
+    size_t      n) ///< length of the string to convert
+  /// @returns u32string
+{
+  std::u32string u32s;
+  char32_t c32;
+  std::mbstate_t state{};
+  char* ptr=const_cast<char*>(s); // Only used for indexing, no modification is made.
+  while(std::size_t rc = std::mbrtoc32(&c32, ptr, n, &state))
+  {   
+      u32s.push_back(c32);
+      if(rc==(std::size_t)-1 || rc==(std::size_t)-2) break;
+      ptr += rc;
+  }
+  return u32s;
+}
+
+/// Convert UTF-8 string to u32string.
+inline std::u32string u32cs(const std::string& s) ///< string with UTF-8 to convert
+  /// @returns u32string
+{
+  return u32cs(s.c_str(), s.size());
 }
 
 } // namespace reflex

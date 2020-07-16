@@ -539,6 +539,12 @@ class AbstractMatcher {
   {
     return wcs(txt_, len_);
   }
+  /// Returns the match as a u32string, converted from UTF-8 text(), may include matched \0s.
+  std::u32string u32str() const
+    /// @returns wide string with text matched
+  {
+    return u32cs(txt_, len_);
+  }
   /// Returns the length of the matched text in number of bytes, including matched \0s, a constant-time operation.
   size_t size() const
     /// @returns match size in bytes
@@ -556,7 +562,7 @@ class AbstractMatcher {
     return n;
   }
   /// Returns the first 8-bit character of the text matched.
-  int chr() const
+  char chr() const
     /// @returns 8-bit char
   {
     return *txt_;
@@ -566,6 +572,12 @@ class AbstractMatcher {
     /// @returns wide char (UTF-8 converted to Unicode)
   {
     return utf8(txt_);
+  }
+  /// Returns the first u32 character of the text matched.
+  char32_t u32chr() const
+    /// @returns char32_t (UTF-8 converted to Unicode)
+  {
+    return fromutf8(txt_);
   }
   /// Updates and returns the starting line number of the match in the input character sequence.
   size_t lineno()
@@ -900,6 +912,33 @@ class AbstractMatcher {
   void wunput() /// Overload with no paramaters to unput wchr().
   {
     wunput(wchr());
+  }
+  /// Put back one (u32) character on the input character sequence for matching, DANGER: invalidates the previous text() pointer and match info, unput is not honored when matching in-place using buffer(base, size) and nothing has been read yet.
+  void u32unput(char32_t c) ///< character to put back
+  {
+    DBGLOG("AbstractMatcher::u32unput()");
+    char tmp[8];
+    size_t n = toutf8(c, tmp);
+    if (pos_ >= n)
+    {
+      pos_ -= n;
+    }
+    else if (own_)
+    {
+      txt_ = buf_;
+      len_ = 0;
+      if (end_ + n >= max_)
+        (void)grow();
+      std::memmove(buf_ + n, buf_, end_);
+      end_ += n;
+    }
+    std::memcpy(&buf_[pos_], tmp, n);
+    cur_ = pos_;
+  }
+  /// Put back one (u32) character on the input character sequence for matching, DANGER: invalidates the previous text() pointer and match info, unput is not honored when matching in-place using buffer(base, size) and nothing has been read yet.
+  void u32unput() /// Overload with no paramaters to unput u32chr().
+  {
+    u32unput(u32chr());
   }
   /// Peek at the next character available for reading from the current input source.
   inline int peek()
