@@ -119,7 +119,7 @@ static const char *posix_class[] = {
 };
 
 static const char *meta_label[] = {
-  NULL,
+  nullptr,
   "NWB",
   "NWE",
   "BWB",
@@ -168,7 +168,7 @@ void Pattern::init(const char *opt, const uint8_t *pred)
   one_ = false;
   if (opc_ || fsm_)
   {
-    if (pred != NULL)
+    if (pred != nullptr)
     {
       len_ = pred[0];
       min_ = pred[1] & 0x0f;
@@ -204,7 +204,7 @@ void Pattern::init(const char *opt, const uint8_t *pred)
     Map       lookahead;
     // parse the regex pattern to construct the followpos NFA without epsilon transitions
     parse(startpos, followpos, modifiers, lookahead);
-    // start state = startpos = firstpost of the followpos NFA, also merge the tree DFA root when non-NULL
+    // start state = startpos = firstpost of the followpos NFA, also merge the tree DFA root when non-nullptr
     DFA::State *start = dfa_.state(tfa_.tree, startpos);
     // compile the NFA into a DFA
     compile(start, followpos, modifiers, lookahead);
@@ -378,7 +378,7 @@ void Pattern::parse(
         if (c == opt_.e)
         {
           c = at(++end);
-          if (c == '\0' || std::strchr("0123456789<>ABDHLNPSUWXbcdehijklpsuwxz", c) != NULL)
+          if (c == '\0' || std::strchr("0123456789<>ABDHLNPSUWXbcdehijklpsuwxz", c) != nullptr)
           {
             end = loc;
             break;
@@ -420,7 +420,7 @@ void Pattern::parse(
             static const char abtnvfr[] = "abtnvfr";
             c = at(loc++);
             const char *s = std::strchr(abtnvfr, c);
-            if (s != NULL)
+            if (s != nullptr)
               c = static_cast<Char>(s - abtnvfr + '\a');
           }
         }
@@ -1202,7 +1202,7 @@ Pattern::Char Pattern::parse_esc(Location& loc, Chars *chars) const
   }
   else if (c == 'N')
   {
-    if (chars != NULL)
+    if (chars != nullptr)
     {
       chars->insert(0, 9);
       chars->insert(11, 255);
@@ -1213,7 +1213,7 @@ Pattern::Char Pattern::parse_esc(Location& loc, Chars *chars) const
   else if ((c == 'p' || c == 'P') && at(loc + 1) == '{')
   {
     loc += 2;
-    if (chars != NULL)
+    if (chars != nullptr)
     {
       size_t i;
       for (i = 0; i < 14; ++i)
@@ -1246,7 +1246,7 @@ Pattern::Char Pattern::parse_esc(Location& loc, Chars *chars) const
   {
     static const char abtnvfr[] = "abtnvfr";
     const char *s = std::strchr(abtnvfr, c);
-    if (s != NULL)
+    if (s != nullptr)
     {
       c = static_cast<Char>(s - abtnvfr + '\a');
     }
@@ -1254,9 +1254,9 @@ Pattern::Char Pattern::parse_esc(Location& loc, Chars *chars) const
     {
       static const char escapes[] = "__sSxX________hHdD__lL__uUwW";
       s = std::strchr(escapes, c);
-      if (s != NULL)
+      if (s != nullptr)
       {
-        if (chars != NULL)
+        if (chars != nullptr)
         {
           posix((s - escapes) / 2, *chars);
           if ((s - escapes) % 2)
@@ -1267,7 +1267,7 @@ Pattern::Char Pattern::parse_esc(Location& loc, Chars *chars) const
     }
     ++loc;
   }
-  if (c <= 0xFF && chars != NULL)
+  if (c <= 0xFF && chars != nullptr)
     chars->insert(c);
   return c;
 }
@@ -1291,9 +1291,9 @@ void Pattern::compile(
   // hash table with 64K entries (uint16_t indexed)
   DFA::State **table = new DFA::State*[65536];
   for (int i = 0; i < 65536; ++i)
-    table[i] = NULL;
+    table[i] = nullptr;
   // start state should only be discoverable (to possibly cycle back to) if no tree DFA was constructed
-  if (start->tnode == NULL)
+  if (start->tnode == nullptr)
     table[hash_pos(start)] = start;
   // last added state
   DFA::State *last_state = start;
@@ -1302,7 +1302,7 @@ void Pattern::compile(
     Moves moves;
     timer_start(et);
     // use the tree DFA accept state, if present
-    if (state->tnode != NULL && state->tnode->accept > 0)
+    if (state->tnode != nullptr && state->tnode->accept > 0)
       state->accept = state->tnode->accept;
     compile_transition(
         state,
@@ -1310,7 +1310,7 @@ void Pattern::compile(
         modifiers,
         lookahead,
         moves);
-    if (state->tnode != NULL)
+    if (state->tnode != nullptr)
     {
       // merge tree DFA transitions into the final DFA transitions to target states
       if (moves.empty())
@@ -1318,7 +1318,7 @@ void Pattern::compile(
         // no DFA transitions: the final DFA transitions are the tree DFA transitions to target states
         for (Char c = 0; c < 256; ++c)
         {
-          if (state->tnode->edge[c] != NULL)
+          if (state->tnode->edge[c] != nullptr)
           {
             DFA::State *target_state = last_state = last_state->next = dfa_.state(state->tnode->edge[c]);
             if (opt_.i && std::isalpha(c))
@@ -1340,11 +1340,11 @@ void Pattern::compile(
         // combine the tree DFA transitions with the regex DFA transition moves
         Chars chars;
         for (Char c = 0; c < 256; ++c)
-          if (state->tnode->edge[c] != NULL)
+          if (state->tnode->edge[c] != nullptr)
             chars.insert(c);
         if (opt_.i)
           for (Char c = 'a'; c <= 'z'; ++c)
-            if (state->tnode->edge[c] != NULL)
+            if (state->tnode->edge[c] != nullptr)
               chars.insert(uppercase(c));
         Moves::iterator i = moves.begin();
         Moves::iterator end = moves.end();
@@ -1433,7 +1433,7 @@ void Pattern::compile(
         DFA::State **branch_ptr = &table[h];
         DFA::State *target_state = *branch_ptr;
         // binary search the target state for a possible matching state in the hash table overflow tree
-        while (target_state != NULL)
+        while (target_state != nullptr)
         {
           if (pos < *target_state)
             target_state = *(branch_ptr = &target_state->left);
@@ -1442,10 +1442,10 @@ void Pattern::compile(
           else
             break;
         }
-        if (target_state == NULL)
+        if (target_state == nullptr)
         {
-          target_state = last_state = last_state->next = dfa_.state(NULL, pos);
-          if (branch_ptr != NULL)
+          target_state = last_state = last_state->next = dfa_.state(nullptr, pos);
+          if (branch_ptr != nullptr)
             *branch_ptr = target_state;
           else
             table[h] = target_state;
@@ -2065,7 +2065,7 @@ void Pattern::encode_dfa(DFA::State *start)
     // add final dead state (HALT opcode) only when needed, i.e. skip dead state if all chars 0-255 are already covered
     if (hi <= 0xFF)
     {
-      state->edges[hi] = std::pair<Char,DFA::State*>(0xFF, reinterpret_cast<DFA::State*>(NULL));
+      state->edges[hi] = std::pair<Char,DFA::State*>(0xFF, nullptr);
       ++nop_;
     }
 #else
@@ -2088,7 +2088,7 @@ void Pattern::encode_dfa(DFA::State *start)
     // add final dead state (HALT opcode) only when needed, i.e. skip dead state if all chars 0-255 are already covered
     if (!covered)
     {
-      state->edges[lo] = std::pair<Char,DFA::State*>(0x00, reinterpret_cast<DFA::State*>(NULL));
+      state->edges[lo] = std::pair<Char,DFA::State*>(0x00, nullptr);
       ++nop_;
     }
 #endif
@@ -2111,7 +2111,7 @@ void Pattern::encode_dfa(DFA::State *start)
         if (lo == hi)
           hi = i->second.first + 1;
         // use 64-bit jump opcode if forward jump determined by previous loop is beyond 32K or backward jump is beyond 64K
-        if (i->second.second != NULL &&
+        if (i->second.second != nullptr &&
             ((i->second.second->first > state->first && i->second.second->first >= Const::LONG / 2) ||
              i->second.second->index >= Const::LONG))
           nop_ += 2;
@@ -2120,7 +2120,7 @@ void Pattern::encode_dfa(DFA::State *start)
         if (is_meta(lo))
         {
           // use 64-bit jump opcode if forward jump determined by previous loop is beyond 32K or backward jump is beyond 64K
-          if (i->second.second != NULL &&
+          if (i->second.second != nullptr &&
             ((i->second.second->first > state->first && i->second.second->first >= Const::LONG / 2) ||
              i->second.second->index >= Const::LONG))
             nop_ += 2 * (i->second.first - lo);
@@ -2136,7 +2136,7 @@ void Pattern::encode_dfa(DFA::State *start)
         if (lo == hi)
           lo = i->second.first - 1;
         // use 64-bit jump opcode if forward jump determined by previous loop is beyond 32K or backward jump is beyond 64K
-        if (i->second.second != NULL &&
+        if (i->second.second != nullptr &&
             ((i->second.second->first > state->first && i->second.second->first >= Const::LONG / 2) ||
              i->second.second->index >= Const::LONG))
           nop_ += 2;
@@ -2145,7 +2145,7 @@ void Pattern::encode_dfa(DFA::State *start)
         if (is_meta(lo))
         {
           // use 64-bit jump opcode if forward jump determined by previous loop is beyond 32K or backward jump is beyond 64K
-          if (i->second.second != NULL &&
+          if (i->second.second != nullptr &&
             ((i->second.second->first > state->first && i->second.second->first >= Const::LONG / 2) ||
              i->second.second->index >= Const::LONG))
             nop_ += 2 * (hi - i->second.first);
@@ -2189,8 +2189,8 @@ void Pattern::encode_dfa(DFA::State *start)
     {
       Char lo = i->first;
       Char hi = i->second.first;
-      Index target_first = i->second.second != NULL ? i->second.second->first : Const::IMAX;
-      Index target_index = i->second.second != NULL ? i->second.second->index : Const::IMAX;
+      Index target_first = i->second.second != nullptr ? i->second.second->first : Const::IMAX;
+      Index target_index = i->second.second != nullptr ? i->second.second->index : Const::IMAX;
       if (!is_meta(lo))
       {
         if (target_index == Const::IMAX)
@@ -2234,8 +2234,8 @@ void Pattern::encode_dfa(DFA::State *start)
       Char lo = i->second.first;
       if (is_meta(lo))
       {
-        Index target_first = i->second.second != NULL ? i->second.second->first : Const::IMAX;
-        Index target_index = i->second.second != NULL ? i->second.second->index : Const::IMAX;
+        Index target_first = i->second.second != nullptr ? i->second.second->first : Const::IMAX;
+        Index target_index = i->second.second != nullptr ? i->second.second->index : Const::IMAX;
         do
         {
           if (target_index == Const::IMAX)
@@ -2260,7 +2260,7 @@ void Pattern::encode_dfa(DFA::State *start)
       if (!is_meta(lo))
       {
         Char hi = i->first;
-        if (i->second.second != NULL)
+        if (i->second.second != nullptr)
         {
           Index target_first = i->second.second->first;
           Index target_index = i->second.second->index;
@@ -2297,7 +2297,7 @@ void Pattern::gencode_dfa(const DFA::State *start) const
      || (len > 4 && filename.compare(len - 4, 4, ".cpp") == 0)
      || (len > 3 && filename.compare(len - 3, 3, ".cc" ) == 0))
     {
-      FILE *file = NULL;
+      FILE *file = nullptr;
       int err = 0;
       if (filename.compare(0, 7, "stdout.") == 0)
         file = stdout;
@@ -2353,7 +2353,7 @@ void Pattern::gencode_dfa(const DFA::State *start) const
             if (!is_meta(lo))
             {
               Index target_index = Const::IMAX;
-              if (i->second.second != NULL)
+              if (i->second.second != nullptr)
                 target_index = i->second.second->index;
               DFA::State::Edges::const_reverse_iterator j = i;
               if (target_index == Const::IMAX && (++j == state->edges.rend() || is_meta(j->second.first)))
@@ -2380,7 +2380,7 @@ void Pattern::gencode_dfa(const DFA::State *start) const
             Char lo = i->first;
             Char hi = i->second.first;
             Index target_index = Const::IMAX;
-            if (i->second.second != NULL)
+            if (i->second.second != nullptr)
               target_index = i->second.second->index;
             if (read)
             {
@@ -2523,7 +2523,7 @@ void Pattern::gencode_dfa(const DFA::State *start) const
             Char hi = i->first;
             Char lo = i->second.first;
             Index target_index = Const::IMAX;
-            if (i->second.second != NULL)
+            if (i->second.second != nullptr)
               target_index = i->second.second->index;
             if (read)
             {
@@ -2694,7 +2694,7 @@ void Pattern::export_dfa(const DFA::State *start) const
     size_t len = filename.length();
     if (len > 3 && filename.compare(len - 3, 3, ".gv") == 0)
     {
-      FILE *file = NULL;
+      FILE *file = nullptr;
       int err = 0;
       if (filename.compare(0, 7, "stdout.") == 0)
         file = stdout;
@@ -2843,7 +2843,7 @@ void Pattern::export_code() const
      || (len > 4 && filename.compare(len - 4, 4, ".cpp") == 0)
      || (len > 3 && filename.compare(len - 3, 3, ".cc" ) == 0))
     {
-      FILE *file = NULL;
+      FILE *file = nullptr;
       int err = 0;
       if (filename.compare(0, 7, "stdout.") == 0)
         file = stdout;
@@ -2959,20 +2959,20 @@ void Pattern::predict_match_dfa(DFA::State *start)
       break;
     }
     DFA::State *next = state->edges.begin()->second.second;
-    if (next == NULL)
+    if (next == nullptr)
     {
       one_ = false;
       break;
     }
     state = next;
   }
-  if (state != NULL && state->accept != 0 && !state->edges.empty())
+  if (state != nullptr && state->accept != 0 && !state->edges.empty())
     one_ = false;
   min_ = 0;
   std::memset(bit_, 0xFF, sizeof(bit_));
   std::memset(pmh_, 0xFF, sizeof(pmh_));
   std::memset(pma_, 0xFF, sizeof(pma_));
-  if (state != NULL && state->accept == 0)
+  if (state != nullptr && state->accept == 0)
   {
     gen_predict_match(state);
 #ifdef DEBUG
@@ -3035,7 +3035,7 @@ void Pattern::gen_predict_match_transitions(DFA::State *state, std::map<DFA::Sta
       break;
     }
     DFA::State *next = edge->second.second;
-    bool accept = (next == NULL || next->accept != 0);
+    bool accept = (next == nullptr || next->accept != 0);
     if (!accept)
     {
       for (DFA::State::Edges::const_iterator e = next->edges.begin(); e != next->edges.end(); ++e)
@@ -3043,15 +3043,15 @@ void Pattern::gen_predict_match_transitions(DFA::State *state, std::map<DFA::Sta
         if (is_meta(e->first))
         {
           if (e == next->edges.begin())
-            next = NULL;
+            next = nullptr;
           accept = true;
           break;
         }
       }
     }
-    else if (next != NULL && next->edges.empty())
+    else if (next != nullptr && next->edges.empty())
     {
-      next = NULL;
+      next = nullptr;
     }
     if (accept)
       min_ = 1;
@@ -3063,7 +3063,7 @@ void Pattern::gen_predict_match_transitions(DFA::State *state, std::map<DFA::Sta
       if (accept)
         pma_[lo] &= ~(1 << 7);
       pma_[lo] &= ~(1 << 6);
-      if (next != NULL)
+      if (next != nullptr)
         states[next].insert(hash(lo));
       ++lo;
     }
@@ -3077,8 +3077,8 @@ void Pattern::gen_predict_match_transitions(size_t level, DFA::State *state, ORa
     Char lo = edge->first;
     if (is_meta(lo))
       break;
-    DFA::State *next = level < 7 ? edge->second.second : NULL;
-    bool accept = next == NULL || next->accept != 0;
+    DFA::State *next = level < 7 ? edge->second.second : nullptr;
+    bool accept = next == nullptr || next->accept != 0;
     if (!accept)
     {
       for (DFA::State::Edges::const_iterator e = next->edges.begin(); e != next->edges.end(); ++e)
@@ -3086,15 +3086,15 @@ void Pattern::gen_predict_match_transitions(size_t level, DFA::State *state, ORa
         if (is_meta(e->first))
         {
           if (e == next->edges.begin())
-            next = NULL;
+            next = nullptr;
           accept = true;
           break;
         }
       }
     }
-    else if (next != NULL && next->edges.empty())
+    else if (next != nullptr && next->edges.empty())
     {
-      next = NULL;
+      next = nullptr;
     }
     if (accept && min_ > level)
       min_ = level + 1;
@@ -3119,7 +3119,7 @@ void Pattern::gen_predict_match_transitions(size_t level, DFA::State *state, ORa
                 pma_[h] &= ~(1 << (7 - 2 * level));
               pma_[h] &= ~(1 << (6 - 2 * level));
             }
-            if (next != NULL)
+            if (next != nullptr)
               states[next].insert(hash(h));
           }
         }

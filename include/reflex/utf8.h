@@ -297,12 +297,11 @@ inline std::u32string u32cs(
   std::u32string u32s;
   char32_t c32;
   std::mbstate_t state{};
-  char* ptr=const_cast<char*>(s); // Only used for indexing, no modification is made.
-  while(std::size_t rc = std::mbrtoc32(&c32, ptr, n, &state))
+  while(std::size_t rc = std::mbrtoc32(&c32, s, n, &state))
   {   
       u32s.push_back(c32);
       if(rc==(std::size_t)-1 || rc==(std::size_t)-2) break;
-      ptr += rc;
+      s += rc;
   }
   return u32s;
 }

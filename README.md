@@ -319,7 +319,7 @@ encodings that are automatically converted when a UTF BOM is present:
 #include <reflex/boostmatcher.h> // reflex::BoostMatcher, reflex::Input, boost::regex
 // use a BoostMatcher to search and display words from a FILE
 FILE *fd = fopen("somefile.txt", "r");
-if (fd == NULL)
+if (fd == nullptr)
   exit(EXIT_FAILURE);
 reflex::BoostMatcher matcher("\\w+", fd);
 while (matcher.find())
