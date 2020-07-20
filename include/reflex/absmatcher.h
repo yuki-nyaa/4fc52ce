@@ -561,6 +561,16 @@ class AbstractMatcher {
       n += (*s & 0xC0) != 0x80;
     return n;
   }
+  /// Returns the length of the matched text in number of u32 characters. This is the same as `wsize()`.
+  size_t u32size() const
+    /// @returns the length of the match in number of u32 (multibyte UTF-8) characters
+  {
+    size_t n = 0;
+    const char *e = txt_ + len_;
+    for (const char *s = txt_; s < e; ++s)
+      n += (*s & 0xC0) != 0x80;
+    return n;
+  }
   /// Returns the first 8-bit character of the text matched.
   char chr() const
     /// @returns 8-bit char
@@ -736,37 +746,37 @@ class AbstractMatcher {
   }
 #endif
   /// Returns std::pair<size_t,std::string>(accept(), str()), useful for tokenizing input into containers of pairs.
-  inline std::pair<size_t,std::string> pair() const
+  std::pair<size_t,std::string> pair() const
     /// @returns std::pair<size_t,std::string>(accept(), str())
   {
     return std::pair<size_t,std::string>(accept(), str());
   }
   /// Returns std::pair<size_t,std::wstring>(accept(), wstr()), useful for tokenizing input into containers of pairs.
-  inline std::pair<size_t,std::wstring> wpair() const
+  std::pair<size_t,std::wstring> wpair() const
     /// @returns std::pair<size_t,std::wstring>(accept(), wstr())
   {
     return std::pair<size_t,std::wstring>(accept(), wstr());
   }
   /// Returns the position of the first character of the match in the input character sequence, a constant-time operation.
-  inline size_t first() const
+  size_t first() const
     /// @returns position in the input character sequence
   {
     return num_ + txt_ - buf_;
   }
   /// Returns the exclusive position of the last character of the match in the input character sequence, a constant-time operation.
-  inline size_t last() const
+  size_t last() const
     /// @returns position in the input character sequence
   {
     return first() + size();
   }
   /// Returns true if this matcher is at the start of a buffer to read an input character sequence. Use reset() to restart reading new input.
-  inline bool at_bob() const
+  bool at_bob() const
     /// @returns true if at the begin of an input sequence
   {
     return got_ == Const::BOB;
   }
   /// Set/reset the begin of a buffer state.
-  inline void set_bob(bool bob) ///< if true: set begin of buffer state
+  void set_bob(bool bob) ///< if true: set begin of buffer state
   {
     if (bob)
       got_ = Const::BOB;
@@ -774,19 +784,19 @@ class AbstractMatcher {
       got_ = Const::UNK;
   }
   /// Returns true if this matcher has no more input to read from the input character sequence.
-  inline bool at_end()
+  bool at_end()
     /// @returns true if at end of input and a read attempt will produce EOF
   {
     return pos_ >= end_ && (eof_ || peek() == EOF);
   }
   /// Returns true if this matcher hit the end of the input character sequence.
-  inline bool hit_end() const
+  bool hit_end() const
     /// @returns true if EOF was hit (and possibly more input would have changed the result), false otherwise (but next read attempt may return EOF immediately)
   {
     return pos_ >= end_ && eof_;
   }
   /// Set and force the end of input state.
-  inline void set_end(bool eof)
+  void set_end(bool eof)
   {
     if (eof)
       flush();
@@ -794,13 +804,13 @@ class AbstractMatcher {
       eof_ = eof;
   }
   /// Returns true if this matcher reached the begin of a new line.
-  inline bool at_bol() const
+  bool at_bol() const
     /// @returns true if at begin of a new line
   {
     return got_ == Const::BOB || got_ == '\n';
   }
   /// Set/reset the begin of a new line state.
-  inline void set_bol(bool bol) ///< if true: set begin of a new line state
+  void set_bol(bool bol) ///< if true: set begin of a new line state
   {
     if (bol)
       got_ = '\n';
@@ -808,13 +818,13 @@ class AbstractMatcher {
       got_ = Const::UNK;
   }
   /// Returns true if this matcher matched text that begins a word.
-  inline bool at_bow()
+  bool at_bow()
     /// @returns true if this matcher matched text that begins a word
   {
     return !isword(got_) && isword(txt_ < buf_ + end_ ? static_cast<unsigned char>(*txt_) : peek_more());
   }
   /// Returns true if this matcher matched text that ends a word.
-  inline bool at_eow()
+  bool at_eow()
     /// @returns true if this matcher matched text that ends a word
   {
     return isword(got_) && !isword(txt_ < buf_ + end_ ? static_cast<unsigned char>(*txt_) : peek_more());
@@ -941,43 +951,39 @@ class AbstractMatcher {
     u32unput(u32chr());
   }
   /// Peek at the next character available for reading from the current input source.
-  inline int peek()
-    /// @returns the character (unsigned char 0..255) or EOF (-1)
+  char peek()
+    /// @returns the character or throws `std::out_of_range`.
   {
     DBGLOG("AbstractMatcher::peek()");
-#if defined(WITH_FAST_GET)
-    return pos_ < end_ ? static_cast<unsigned char>(buf_[pos_]) : peek_more();
-#else
     if (pos_ < end_)
-      return static_cast<unsigned char>(buf_[pos_]);
+      return buf_[pos_];
     if (eof_)
-      return EOF;
+      throw std::out_of_range("Peek at EOF!");
     while (true)
     {
       if (end_ + blk_ + 1 >= max_)
         (void)grow();
       end_ += get(buf_ + end_, blk_ > 0 ? blk_ : max_ - end_ - 1);
       if (pos_ < end_)
-        return static_cast<unsigned char>(buf_[pos_]);
+        return buf_[pos_];
       DBGLOGN("peek(): EOF");
       if (!wrap())
       {
         eof_ = true;
-        return EOF;
+        throw std::out_of_range("Peek at EOF!");
       }
     }
-#endif
   }
 #if defined(WITH_SPAN)
   /// Returns pointer to the begin of the line in the buffer containing the matched text.
-  inline const char *bol()
+  const char *bol()
     /// @returns pointer to the begin of line
   {
     (void)lineno();
     return bol_;
   }
   /// Returns pointer to the end of the line (last char + 1) in the buffer containing the matched text, DANGER: invalidates previous bol() and text() pointers, use eol() before bol(), text(), begin(), and end() when those are used.
-  inline const char *eol(bool inclusive = false) ///< true if inclusive, i.e. point after \n
+  const char *eol(bool inclusive = false) ///< true if inclusive, i.e. point after \n
     /// @returns pointer to the end of line
   {
     if (chr_ == '\n' || (txt_ + len_ < buf_ + end_ && txt_[len_] == '\n'))
@@ -1086,6 +1092,15 @@ class AbstractMatcher {
   {
     char s[8];
     size_t n = utf8(c, s);
+    s[n] = '\0';
+    return skip(s);
+  }
+  /// Skip input until the specified Unicode character is consumed and return true, or EOF is reached and return false.
+  bool skip(char32_t c) ///< Unicode character to skip to
+    /// @returns true if skipped to c, false if EOF is reached
+  {
+    char s[8];
+    size_t n = toutf8(c, s);
     s[n] = '\0';
     return skip(s);
   }
@@ -1389,7 +1404,7 @@ class AbstractMatcher {
     return true;
   }
   /// Returns the next character read from the current input source.
-  inline int get()
+  int get()
     /// @returns the character read (unsigned char 0..255) or EOF (-1)
   {
     DBGLOG("AbstractMatcher::get()");
@@ -1417,7 +1432,7 @@ class AbstractMatcher {
 #endif
   }
   /// Reset the matched text by removing the terminating \0, which is needed to search for a new match.
-  inline void reset_text()
+  void reset_text()
   {
     if (chr_ != '\0')
     {
@@ -1426,7 +1441,7 @@ class AbstractMatcher {
     }
   }
   /// Set the current position in the buffer for the next match.
-  inline void set_current(size_t loc) ///< new location in buffer
+  void set_current(size_t loc) ///< new location in buffer
   {
     DBGCHK(loc <= end_);
     pos_ = cur_ = loc;
@@ -1437,7 +1452,7 @@ class AbstractMatcher {
 #endif
   }
   /// Set the current match position in the buffer.
-  inline void set_current_match(size_t loc) ///< new location in buffer
+  void set_current_match(size_t loc) ///< new location in buffer
   {
     set_current(loc);
     txt_ = buf_ + cur_;
@@ -1465,24 +1480,24 @@ class AbstractMatcher {
     }
   }
   /// Peek at the next character and grow the buffer to make more room if necessary.
-  int peek_more()
-    /// @returns the character (unsigned char 0..255) or EOF (-1)
+  char peek_more()
+    /// @returns the character or throws `std::out_of_range`.
   {
     DBGLOG("AbstractMatcher::peek_more()");
     if (eof_)
-      return EOF;
+      throw std::out_of_range("Peek more at EOF!");
     while (true)
     {
       if (end_ + blk_ + 1 >= max_)
         (void)grow();
       end_ += get(buf_ + end_, blk_ > 0 ? blk_ : max_ - end_ - 1);
       if (pos_ < end_)
-        return static_cast<unsigned char>(buf_[pos_]);
+        return buf_[pos_];
       DBGLOGN("peek_more(): EOF");
       if (!wrap())
       {
         eof_ = true;
-        return EOF;
+        throw std::out_of_range("Peek more at EOF!");
       }
     }
   }

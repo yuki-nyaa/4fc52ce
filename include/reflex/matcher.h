@@ -409,6 +409,7 @@ class Matcher : public PatternMatcher<reflex::Pattern> {
     /// @returns nonzero if input matched the pattern
   {
     DBGLOG("BEGIN Matcher::match()");
+    bool tail_=false;
     reset_text();
     len_ = 0; // split text length starts with 0
 scan:
@@ -468,6 +469,7 @@ redo:
               if (lap_.size() > la && lap_[la] >= 0)
                 cur_ = txt_ - buf_ + static_cast<size_t>(lap_[la]); // mind the (new) gap
               ++pc;
+              tail_=true;
               continue;
             }
             case 0xFB: // HEAD
@@ -531,6 +533,7 @@ redo:
                   if (lap_.size() > la && lap_[la] >= 0)
                     cur_ = txt_ - buf_ + static_cast<size_t>(lap_[la]); // mind the (new) gap
                   opcode = *++pc;
+                  tail_=true;
                   continue;
                 }
                 case 0xFB: // HEAD
@@ -873,50 +876,57 @@ unrolled:
       }
     }
     len_ = cur_ - (txt_ - buf_);
-    if (len_ == 0 && !nul)
+    if(!tail_)
     {
-      DBGLOG("Empty or no match cur = %zu pos = %zu end = %zu", cur_, pos_, end_);
-      pos_ = cur_;
-      if (at_end())
+      if (len_ == 0 && !nul)
       {
-        set_current(cur_);
-        DBGLOG("Reject empty match at EOF");
-        cap_ = 0;
+        DBGLOG("Empty or no match cur = %zu pos = %zu end = %zu", cur_, pos_, end_);
+        pos_ = cur_;
+        if (at_end())
+        {
+          set_current(cur_);
+          DBGLOG("Reject empty match at EOF");
+          cap_ = 0;
+        }
+        else if (method == Const::FIND)
+        {
+          DBGLOG("Reject empty match and continue?");
+          // skip one char to keep searching
+          set_current(++cur_);
+          // allow FIND with "N" to match an empty line, with ^$ etc.
+          if (cap_ == 0 || !opt_.N)
+            goto scan;
+          DBGLOG("Accept empty match");
+        }
+        else
+        {
+          set_current(cur_);
+          DBGLOG("Reject empty match");
+          cap_ = 0;
+        }
       }
-      else if (method == Const::FIND)
+      else if (len_ == 0 && cur_ == end_)
       {
-        DBGLOG("Reject empty match and continue?");
-        // skip one char to keep searching
-        set_current(++cur_);
-        // allow FIND with "N" to match an empty line, with ^$ etc.
-        if (cap_ == 0 || !opt_.N)
-          goto scan;
-        DBGLOG("Accept empty match");
+        DBGLOG("Hit end: got = %d", got_);
+        if (cap_ == Const::REDO && !opt_.A)
+          cap_ = 0;
       }
       else
       {
         set_current(cur_);
-        DBGLOG("Reject empty match");
-        cap_ = 0;
+        if (len_ > 0 && cap_ == Const::REDO && !opt_.A)
+        {
+          DBGLOG("Ignore accept and continue: len = %zu", len_);
+          len_ = 0;
+          if (method != Const::MATCH)
+            goto scan;
+          cap_ = 0;
+        }
       }
-    }
-    else if (len_ == 0 && cur_ == end_)
-    {
-      DBGLOG("Hit end: got = %d", got_);
-      if (cap_ == Const::REDO && !opt_.A)
-        cap_ = 0;
     }
     else
     {
-      set_current(cur_);
-      if (len_ > 0 && cap_ == Const::REDO && !opt_.A)
-      {
-        DBGLOG("Ignore accept and continue: len = %zu", len_);
-        len_ = 0;
-        if (method != Const::MATCH)
-          goto scan;
-        cap_ = 0;
-      }
+      pos_=cur_;
     }
     DBGLOG("Return: cap = %zu txt = '%s' len = %zu pos = %zu got = %d", cap_, std::string(txt_, len_).c_str(), len_, pos_, got_);
     DBGLOG("END match()");

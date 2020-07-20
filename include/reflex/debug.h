@@ -141,10 +141,10 @@ extern "C" void REFLEX_DBGOUT_(const char *log, const char *file, int line);
 
 #define DBGXIFY(S) DBGIFY_(S)
 #define DBGIFY_(S) #S
-#if DEBUG + 0
+#if DEBUG_REFLEX + 0
 # define DBGFILE "DEBUG.log"
 #else
-# define DBGFILE DBGXIFY(DEBUG) ".log"
+# define DBGFILE DBGXIFY(DEBUG_REFLEX) ".log"
 #endif
 #define DBGSTR(S) (S?S:"(nullptr)")
 #define _DBGLOG(...) \
@@ -154,7 +154,7 @@ extern "C" void REFLEX_DBGOUT_(const char *log, const char *file, int line);
 #define _DBGLOGA(...) \
 ( ::fprintf(REFLEX_DBGFD_, "" __VA_ARGS__), ::fflush(REFLEX_DBGFD_) )
 
-#ifdef DEBUG
+#ifdef DEBUG_REFLEX
 
 #define DBGCHK(c) assert(c)
 
