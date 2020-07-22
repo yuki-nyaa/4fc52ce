@@ -1636,22 +1636,6 @@ void Reflex::parse_section_2()
             for (Starts::const_iterator start = starts.begin(); start != starts.end(); ++start)
               rules[*start].push_back(Rule(pattern, regex, Code(code, infile, rule_lineno)));
           }
-          else if (scopes.empty() && regex == "<<EOF>>")
-          {
-            // only the first <<EOF>> code should be used
-            if (code == "|")
-              error("bad <<EOF>> action | in section 2: ", line.c_str());
-            for (Start start = 0; start < conditions.size(); ++start)
-              rules[start].push_back(Rule(pattern, regex, Code(code, infile, rule_lineno)));
-          }
-          else if (scopes.empty() && regex == "<<DEFAULT>>")
-          {
-            // only the first <<DEFAULT>> code should be used
-            if (code == "|")
-              error("bad <<DEFAULT>> action | in section 2: ", line.c_str());
-            for (Start start = 0; start < conditions.size(); ++start)
-              rules[start].push_back(Rule(pattern, regex, Code(code, infile, rule_lineno)));
-          }
           else if (!scopes.empty())
           {
             for (Starts::const_iterator start = scopes.top().begin(); start != scopes.top().end(); ++start)
@@ -2898,40 +2882,43 @@ void Reflex::write_lexer()
           break;
         }
       }
-      if (has_default==false && !options["nodefault"].empty())
+      if(has_default==false)
       {
-        if (!options["flex"].empty())
-          *out <<
-            "              LexerError(\"scanner jammed\");\n"
-            "              yyterminate();\n";
-        else if (!options["debug"].empty())
-          *out <<
-            "              char ch = matcher().input();\n"
-            "              if (debug()) std::cerr << \"--" <<
-            SGR("\\033[1;31m") << "suppressing default rule for" << SGR("\\033[0m") <<
-            " (\\\"\" << ch << \"\\\")\\n\";\n";
-        else if (!options["exception"].empty())
-          *out <<
-            "              throw " << options["exception"] << ";\n";
+        if (!options["nodefault"].empty())
+        {
+          if (!options["flex"].empty())
+            *out <<
+              "              LexerError(\"scanner jammed\");\n"
+              "              yyterminate();\n";
+          else if (!options["debug"].empty())
+            *out <<
+              "              char ch = matcher().input();\n"
+              "              if (debug()) std::cerr << \"--" <<
+              SGR("\\033[1;31m") << "suppressing default rule for" << SGR("\\033[0m") <<
+              " (\\\"\" << ch << \"\\\")\\n\";\n";
+          else if (!options["exception"].empty())
+            *out <<
+              "              throw " << options["exception"] << ";\n";
+          else
+            *out <<
+              "              lexer_error((std::string(\"scanner jammed in initial state \")+std::to_string(start())).c_str());\n"
+              "              return " << token_type << "();\n";
+        }
         else
-          *out <<
-            "              lexer_error((std::string(\"scanner jammed in initial state \")+std::to_string(start())).c_str());\n"
-            "              return " << token_type << "();\n";
-      }
-      else
-      {
-        if (!options["perf_report"].empty())
-          *out <<
-            "              ++perf_report_" << conditions[start] << "_default;\n";
-        if (!options["exception"].empty())
-          *out <<
-            "              throw " << options["exception"] << ";\n";
-        else if (!options["flex"].empty())
-          *out <<
-            "              output(matcher().input());\n";
-        else
-          *out <<
-            "              out().put(matcher().input());\n";
+        {
+          if (!options["perf_report"].empty())
+            *out <<
+              "              ++perf_report_" << conditions[start] << "_default;\n";
+          if (!options["exception"].empty())
+            *out <<
+              "              throw " << options["exception"] << ";\n";
+          else if (!options["flex"].empty())
+            *out <<
+              "              output(matcher().input());\n";
+          else
+            *out <<
+              "              out().put(matcher().input());\n";
+        }
       }
       *out <<
         "            }\n";
