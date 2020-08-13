@@ -1,5 +1,0 @@
-List the files I modified here.
-
-diff.txt
-.gitignore
-reflex.cpp

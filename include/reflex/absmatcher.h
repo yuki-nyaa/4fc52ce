@@ -372,15 +372,11 @@ class AbstractMatcher {
   bool buffer(size_t blk = 0) ///< new block size between 1 and Const::BLOCK, or 0 to buffer all input (default)
     /// @returns true when successful to buffer all input when n=0
   {
-    if (eof_)
-      return true;
     if (blk > Const::BLOCK)
       blk = Const::BLOCK;
     DBGLOG("AbstractMatcher::buffer(%zu)", blk);
     blk_ = blk;
-    if (blk > 0)
-      return true;
-    if (in.eof())
+    if (blk > 0 || eof_ || in.eof())
       return true;
     size_t n = in.size(); // get the (rest of the) data size, which is 0 if unknown (e.g. TTY)
     if (n > 0)
@@ -951,28 +947,32 @@ class AbstractMatcher {
     u32unput(u32chr());
   }
   /// Peek at the next character available for reading from the current input source.
-  char peek()
-    /// @returns the character or throws `std::out_of_range`.
+  int peek()
+    /// @returns the character (unsigned char 0..255) or EOF (-1)
   {
     DBGLOG("AbstractMatcher::peek()");
+#if defined(WITH_FAST_GET)
+    return pos_ < end_ ? static_cast<unsigned char>(buf_[pos_]) : peek_more();
+#else
     if (pos_ < end_)
-      return buf_[pos_];
+      return static_cast<unsigned char>(buf_[pos_]);
     if (eof_)
-      throw std::out_of_range("Peek at EOF!");
+      return EOF;
     while (true)
     {
       if (end_ + blk_ + 1 >= max_)
         (void)grow();
       end_ += get(buf_ + end_, blk_ > 0 ? blk_ : max_ - end_ - 1);
       if (pos_ < end_)
-        return buf_[pos_];
+        return static_cast<unsigned char>(buf_[pos_]);
       DBGLOGN("peek(): EOF");
       if (!wrap())
       {
         eof_ = true;
-        throw std::out_of_range("Peek at EOF!");
+        return EOF;
       }
     }
+#endif
   }
 #if defined(WITH_SPAN)
   /// Returns pointer to the begin of the line in the buffer containing the matched text.
@@ -1480,24 +1480,24 @@ class AbstractMatcher {
     }
   }
   /// Peek at the next character and grow the buffer to make more room if necessary.
-  char peek_more()
-    /// @returns the character or throws `std::out_of_range`.
+  int peek_more()
+    /// @returns the character (unsigned char 0..255) or EOF (-1)
   {
     DBGLOG("AbstractMatcher::peek_more()");
     if (eof_)
-      throw std::out_of_range("Peek more at EOF!");
+      return EOF;
     while (true)
     {
       if (end_ + blk_ + 1 >= max_)
         (void)grow();
       end_ += get(buf_ + end_, blk_ > 0 ? blk_ : max_ - end_ - 1);
       if (pos_ < end_)
-        return buf_[pos_];
+        return static_cast<unsigned char>(buf_[pos_]);
       DBGLOGN("peek_more(): EOF");
       if (!wrap())
       {
         eof_ = true;
-        throw std::out_of_range("Peek more at EOF!");
+        return EOF;
       }
     }
   }
