@@ -233,7 +233,7 @@ class AbstractLexer {
   {
     return matcher_;
   }
-  /// Returns a new matcher for the given input.
+  /// Returns a new copy of the matcher for the given input.
   virtual Matcher *new_matcher(
       const Input& input = Input(), ///< reflex::Input character sequence to match
       const char *opt    = nullptr)    ///< options, if any

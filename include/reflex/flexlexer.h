@@ -428,16 +428,16 @@ class FlexLexer : public AbstractLexer<M> {
       :
         AbstractBaseLexer::Matcher(pattern, input, lexer, opt)
     { }
-   protected:
     /// Read character sequences via a Flex-compatible virtual FlexLexer::LexerInput method.
     virtual size_t get(
         char  *s,
         size_t n)
     {
       FlexLexer *lexer = dynamic_cast<FlexLexer*>(this->lexer_); // a safe cast
-      size_t k = lexer->LexerInput(s, n); // a nice trick to get input from LexerInput()
+      size_t k = lexer->LexerInput(s, n); // a nice little trick to get input from LexerInput()
       return k < n ? k : n; // make sure the return value is limited to n, as it should be, even when LexerInput misbehaves!
     }
+   protected:
     /// Check the Flex-compatible FlexLexer::yywrap method to determine if matcher should wrap input after EOF (lexer yywrap() should return 0 to wrap input after EOF).
     virtual bool wrap()
       /// @returns true if FlexLexer::yywrap() == 0 indicating that input is wrapped after EOF
