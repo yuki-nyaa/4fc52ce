@@ -5544,9 +5544,6 @@ fi
 if test x"$DOXYGEN" = x"NO_DOXYGEN"; then
     { $as_echo "$as_me:${as_lineno-$LINENO}: Couldn't find Doxygen -- documentation updates cannot be built without Doxygen" >&5
 $as_echo "$as_me: Couldn't find Doxygen -- documentation updates cannot be built without Doxygen" >&6;}
-else
-    ac_config_files="$ac_config_files doc/Doxyfile"
-
 fi
 DOXYGEN_OUTPUT_DIRECTORY="doc/html"
 
@@ -6288,7 +6285,6 @@ do
   case $ac_config_target in
     "config.h") CONFIG_HEADERS="$CONFIG_HEADERS config.h" ;;
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
-    "doc/Doxyfile") CONFIG_FILES="$CONFIG_FILES doc/Doxyfile" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "lib/Makefile") CONFIG_FILES="$CONFIG_FILES lib/Makefile" ;;
     "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;

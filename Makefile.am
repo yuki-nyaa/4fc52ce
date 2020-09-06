@@ -1,6 +1,6 @@
 SUBDIRS = lib src . tests @EXAMPLESDIR@
 
-man1_MANS = doc/man/reflex.1
+# man1_MANS = doc/man/reflex.1
 
 EXTRA_DIST = README.md LICENSE.txt CONTRIBUTING.md CODE_OF_CONDUCT.md
 

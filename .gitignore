@@ -58,3 +58,15 @@ stamp-h1
 
 # My file to store some temporary code.
 temp.txt
+
+# Docs
+doc/**
+!Doxyfile
+!doxygen_content.css
+!doxygen_tabs.css
+!footer.html
+!header.html
+!index.md
+!README.md
+!reflex-logo.pdf
+!reflex-logo.png

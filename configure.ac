@@ -164,8 +164,6 @@ if test "$DOXYGEN" = NO_DOXYGEN; then
 fi
 if test x"$DOXYGEN" = x"NO_DOXYGEN"; then
     AC_MSG_NOTICE([Couldn't find Doxygen -- documentation updates cannot be built without Doxygen])
-else
-    AC_CONFIG_FILES([doc/Doxyfile])
 fi
 DOXYGEN_OUTPUT_DIRECTORY="doc/html"
 AC_SUBST(DOXYGEN_OUTPUT_DIRECTORY)
