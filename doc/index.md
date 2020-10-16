@@ -580,7 +580,7 @@ UTF-8, 16, or 32 encodings:
 
     // use a PCRE2Matcher to search and display words from a FILE
     FILE *fd = fopen("cows.txt", "r");
-    if (fd == NULL)
+    if (fd == nullptr)
       exit(EXIT_FAILURE);
     reflex::PCRE2Matcher matcher("\\w+", fd);
     while (matcher.find() != 0)
@@ -717,7 +717,7 @@ match as a pair with a `const char*` pointer to the group-matching text and the
 size of the matched text in bytes.  Because the pointer points to a string that
 is not 0-terminated, use the size to determine the matching part.
 
-The pointer is `NULL` when the group capture has no match.
+The pointer is `nullptr` when the group capture has no match.
 
 For example:
 
@@ -745,7 +745,7 @@ after matching continues and when the matcher object is deallocated.  To retain
 the `text()` value use the `str()` method that returns a copy of `text()`.
 
 @warning The `operator[]` method returns a pair with the match info of the n'th
-group, which is a non-0-terminated `const char*` pointer (or NULL) and its size
+group, which is a non-0-terminated `const char*` pointer (or nullptr) and its size
 in bytes of the captured match.  The string *should not be used* after matching
 continues.
 
@@ -2261,7 +2261,7 @@ switch to another input source while preserving the original input source
 associated with the matcher on the stack with `push_matcher()`.  The
 `pop_matcher()` action returns `true` when successful and `false` otherwise,
 when the stack is empty.  When `false`, `has_matcher()` returns `false` and
-`ptr_matcher()` returns `NULL`.  See also \ref reflex-multiple-input.
+`ptr_matcher()` returns `nullptr`.  See also \ref reflex-multiple-input.
 
 The following Flex actions are also supported with <b>`reflex`</b> option
 `−−flex`:
@@ -2335,7 +2335,7 @@ argument.  To set an alternative output stream than standard output, pass a
     int main(int argc, char **argv)
     {
       FILE *fd = stdin;
-      if (argc > 1 && (fd = fopen(argv[1], "r")) == NULL)
+      if (argc > 1 && (fd = fopen(argv[1], "r")) == nullptr)
         exit(EXIT_FAILURE);
       std::ofstream of("output.txt", std::ofstream::out);
       if (!of)
@@ -3464,7 +3464,7 @@ This produces the following Lexer class with the template parts filled in:
         virtual int LEX(PARAMS);
         int LEX(
             const reflex::Input& input,
-            std::ostream        *os = NULL,
+            std::ostream        *os = nullptr,
             PARAMS)
         {
           in(input);
@@ -3520,7 +3520,7 @@ Flex with option `-+` for C++):
         LEXER(
             CTORARGS,
             const reflex::Input& input = reflex::Input(),
-            std::ostream        *os    = NULL)
+            std::ostream        *os    = nullptr)
           :
             FlexLexer(input, os)
         {
@@ -3529,7 +3529,7 @@ Flex with option `-+` for C++):
         virtual int LEX(PARAMS);
         int LEX(
             const reflex::Input& input,
-            std::ostream        *os = NULL,
+            std::ostream        *os = nullptr,
             PARAMS)
         {
           in(input);
@@ -3703,7 +3703,7 @@ For example, to switch input to another source while using the scanner, use
 ~~~{.cpp}
     // read from a file, this also decodes UTF-8/16/32 encodings automatically
     FILE *fd = fopen("cow.txt", "r");
-    if (fd == NULL)
+    if (fd == nullptr)
       ... // error, bail out
     lexer.in(fd);
     lexer.lex();
@@ -3762,7 +3762,7 @@ With options `−−flex` and `−−bison` you can also use classic Flex functi
 ~~~{.cpp}
     // read from a file, this also decodes UTF-8/16/32 encodings automatically
     FILE *fd = fopen("cow.txt", "r");
-    if (fd == NULL)
+    if (fd == nullptr)
       ... // error, bail out
     yyin = fd;
     yylex();
@@ -3834,7 +3834,7 @@ scanners generated with option `−−reentrant`, for example:
 ~~~{.cpp}
     // read from a file, this also decodes UTF-8/16/32 encodings automatically
     FILE *fd = fopen("cow.txt", "r");
-    if (fd == NULL)
+    if (fd == nullptr)
       ... // error, bail out
     yyget_in(yyscanner) = fd;
     yylex();
@@ -4533,7 +4533,7 @@ specification to `extern "C"` to enable C linkage rules:
 
     %%
 
-    [0-9]+               yylval.num = strtol(text(), NULL, 10);
+    [0-9]+               yylval.num = strtol(text(), nullptr, 10);
                          return CONST_NUMBER;
     \"([^\\"]|\\")*\"    yylval.str = text();
                          return CONST_STRING;
@@ -5147,7 +5147,7 @@ follows:
 <div class="alt">
 ~~~{.cpp}
     FILE *f = fopen(filename, "r");
-    if (f != NULL)
+    if (f != nullptr)
     {
       yy::Lexer lexer(f);        // read file, decode UTF-8/16/32 format
       lexer.filename = filename; // the filename to display with error locations
@@ -7053,7 +7053,7 @@ For example, to display the contents of a text file while normalizing spacing:
     #include <reflex/pcre2matcher.h> // reflex::PCRE2Matcher, reflex::Input
 
     reflex::PCRE2Matcher matcher("\\s+", fopen("abstract.txt", "r"));
-    if (matcher.in.file() != NULL)
+    if (matcher.in.file() != nullptr)
     {
       std::copy(matcher.split.begin(), matcher.split.end(), std::ostream_iterator<std::string>(std::cout, " "));
       fclose(matcher.in.file());
@@ -7312,7 +7312,7 @@ matcher directly, even when you use the matcher's search and match methods:
   `peek()`   | returns next 8-bit char from the input without consuming it
   `skip(c)`  | skip input until character `c` (`char` or `wchar_t`) is consumed
   `skip(s)`  | skip input until UTF-8 string `s` is consumed
-  `rest()`   | returns the remaining input as a non-NULL `char*` string
+  `rest()`   | returns the remaining input as a non-nullptr `char*` string
 
 The `input()`, `winput()`, and `peek()` methods return a non-negative character
 code and EOF (-1) when the end of input is reached.
@@ -7350,7 +7350,7 @@ and return `true`, for example:
           case 0: in = "Hello World!";
                   return true;
           case 1: in = fopen("hello.txt", "r");
-                  return in.file() != NULL;
+                  return in.file() != nullptr;
           case 2: fclose(in.file());
                   in = "Goodbye!";
                   return true;
@@ -7562,10 +7562,10 @@ To obtain the properties of an input source use the following methods:
   `size()`    | size in bytes of the remaining input, zero when EOF or unknown
   `good()`    | input is available to read (no error and not EOF)
   `eof()`     | end of input (but use only `at_end()` with matchers!)
-  `cstring()` | the current `const char*` (of a `std::string`) or NULL
-  `wstring()` | the current `const wchar_t*` (of a `std::wstring`) or NULL
-  `file()`    | the current `FILE*` file descriptor or NULL
-  `istream()` | a `std::istream*` pointer to the current stream object or NULL
+  `cstring()` | the current `const char*` (of a `std::string`) or nullptr
+  `wstring()` | the current `const wchar_t*` (of a `std::wstring`) or nullptr
+  `file()`    | the current `FILE*` file descriptor or nullptr
+  `istream()` | a `std::istream*` pointer to the current stream object or nullptr
 
 🔝 [Back to table of contents](#)
 
@@ -7769,20 +7769,20 @@ be used, since both support group captures.
     if (re.scan())
     {
       // found a partial match at start, now check if we have a host
-      if (re[1].first != NULL)
+      if (re[1].first != nullptr)
       {
         std::string host(re[1].first, re[1].second);
         std::cout << "host: " << host << std::endl;
 
         // check of we have a port
-        if (re[2].first != NULL && re[2].second != 0)
+        if (re[2].first != nullptr && re[2].second != 0)
         {
           std::string port(re[2].first, re[2].second);
           std::cout << "port: " << port << std::endl;
         }
 
         // check of we have a path
-        if (re[3].first != NULL && re[3].second != 0)
+        if (re[3].first != nullptr && re[3].second != 0)
         {
           std::string path(re[3].first, re[3].second);
           std::cout << "path: " << path << std::endl;
@@ -8015,20 +8015,20 @@ URL's parts and also use `input()` to check the input character:
       if (re.scan())
       {
         // found a partial match at start, now check if we have a host
-        if (re[1].first != NULL)
+        if (re[1].first != nullptr)
         {
           std::string host(re[1].first, re[1].second);
           std::cout << "host: " << host << std::endl;
 
           // check of we have a port
-          if (re[2].first != NULL && re[2].second != 0)
+          if (re[2].first != nullptr && re[2].second != 0)
           {
             std::string port(re[2].first, re[2].second);
             std::cout << "port: " << port << std::endl;
           }
 
           // check of we have a path
-          if (re[3].first != NULL && re[3].second != 0)
+          if (re[3].first != nullptr && re[3].second != 0)
           {
             std::string path(re[3].first, re[3].second);
             std::cout << "path: " << path << std::endl;
@@ -8100,7 +8100,7 @@ file's state is accessed through the matcher's member variable `in`:
 
     BoostMatcher matcher("\\s+", fopen("filename", "r"));
 
-    if (matcher.in.file() != NULL && matcher.in.good())
+    if (matcher.in.file() != nullptr && matcher.in.good())
     {
       switch (matcher.in.file_encoding())
       {
@@ -8165,7 +8165,7 @@ example, if you expect the source file to contain ISO-8859-1 8-bit characters
 
 ~~~{.cpp}
     reflex::Input input(fopen("filename", "r"), reflex::Input::file_encoding::latin);
-    if (input.file() != NULL)
+    if (input.file() != nullptr)
     {
       reflex::BoostMatcher matcher("\\s+", input);
       matcher.buffer(); // because Boost.Regex partial_match is broken!
@@ -8494,7 +8494,7 @@ information to report the error.  For example as follows:
       else
       {
         FILE *file = lexer->in().file(); // the current FILE* being scanned
-        if (file != NULL)
+        if (file != nullptr)
         {
           YY_BUFFER_STATE buf = yy_create_buffer(file, YY_BUF_SIZE, scanner);
           yypush_buffer_state(buf, scanner); // push current buffer (matcher), use buf
@@ -8541,7 +8541,7 @@ be reported as follows (without option `−−flex`):
       else
       {
         FILE *file = lexer.in().file(); // the current file being scanned
-        if (file != NULL)
+        if (file != nullptr)
         {
           yy::scanner::Matcher *m = lexer.new_matcher(file); // new matcher
           lexer.push_matcher(m); // save the current matcher
@@ -8863,7 +8863,7 @@ constructor and in the `wrap()` method as follows:
         {
           free((void*)line);
           line = readline(prompt);
-          if (line != NULL)
+          if (line != nullptr)
           {
             if (*line)
               add_history(line);
@@ -8872,7 +8872,7 @@ constructor and in the `wrap()` method as follows:
           }
         }
         // wrap() == true means OK: wrapped after EOF
-        return line != NULL;
+        return line != nullptr;
       }
       // the line returned by readline() without \n
       char *line;
@@ -8881,9 +8881,9 @@ constructor and in the `wrap()` method as follows:
     }
 
     %init{
-      prompt = NULL;
+      prompt = nullptr;
       line = readline(prompt);
-      if (line != NULL)
+      if (line != nullptr)
       {
         if (*line)
           add_history(line);
@@ -8905,7 +8905,7 @@ With option `−−flex` you will need to replace `wrap()` by a Flex-like
         {
           free((void*)line);
           line = readline(prompt);
-          if (line != NULL)
+          if (line != nullptr)
           {
             if (*line)
               add_history(line);
@@ -8914,7 +8914,7 @@ With option `−−flex` you will need to replace `wrap()` by a Flex-like
           }
         }
         // yywrap() == 0 means OK: wrapped after EOF
-        return line != NULL ? 0 : 1;
+        return line != nullptr ? 0 : 1;
       }
 ~~~
 </div>
@@ -8989,7 +8989,7 @@ the result that unnecessarily burns CPU cycles.  Instead of a fixed delay,
       FD_SET(fd, &fds);
       tv.tv_sec = 1;
       tv.tv_usec = 0;
-      int r = ::select(fd + 1, &fds, NULL, &fds, &tv);
+      int r = ::select(fd + 1, &fds, nullptr, &fds, &tv);
       if (r < 0 && errno != EINTR)
         return 0;
       if (r > 0)
